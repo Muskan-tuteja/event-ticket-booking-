@@ -9,59 +9,61 @@ import MyTickets from "./pages/public/MyTickets";
 import Login from "./pages/public/Login";
 import Register from "./pages/public/Register";
 import OrganizerDashboard from "./pages/organizer/Dashboard";
+import MyEvents from "./pages/organizer/MyEvents";
+import CreateEvent from "./pages/organizer/CreateEvent";
+import EventManagement from "./pages/organizer/EventManagement";
+import TicketsSales from "./pages/organizer/TicketsSales";
 
+import Attendees from "./pages/organizer/Attendees";
+import Scanner from "./pages/scanner/Scanner";
+import Analytics from "./pages/organizer/Analytics";
+import Settings from "./pages/organizer/Settings";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminEvents from "./pages/admin/Events";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* PUBLIC WEBSITE */}
 
         <Route path="/" element={<Home />} />
 
         <Route path="/events" element={<Events />} />
 
-        <Route
-          path="/events/:id"
-          element={<EventDetails />}
-        />
+        <Route path="/events/:id" element={<EventDetails />} />
 
-        <Route
-          path="/checkout/:id"
-          element={<Checkout />}
-        />
+        <Route path="/checkout/:id" element={<Checkout />} />
 
-        <Route
-          path="/payment-success"
-          element={<PaymentSuccess />}
-        />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
 
-        <Route
-          path="/tickets"
-          element={<MyTickets />}
-        />
+        <Route path="/tickets" element={<MyTickets />} />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-        <Route
-  path="/register"
-  element={<Register />}
-/>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* ORGANIZER */}
 
-        <Route
-          path="/organizer"
-          element={<OrganizerDashboard />}
-        />
+        <Route path="/organizer" element={<OrganizerDashboard />} />
 
-        <Route
-          path="/organizer/dashboard"
-          element={<OrganizerDashboard />}
-        />
+        <Route path="/organizer/dashboard" element={<OrganizerDashboard />} />
+        <Route path="/organizer/events" element={<MyEvents />} />
+        <Route path="/organizer/create-event" element={<CreateEvent />} />
+        <Route path="/organizer/events/:id" element={<EventManagement />} />
+        <Route path="/organizer/tickets" element={<TicketsSales />} />
+        <Route path="/organizer/attendees" element={<Attendees />} />
+        <Route path="/scanner" element={<Scanner />} />
+        <Route path="/organizer/analytics" element={<Analytics />} />
+        <Route path="/organizer/settings" element={<Settings />} />
+        {/* ADMIN */}
 
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        <Route path="/admin" element={<AdminDashboard />} />
+      <Route
+  path="/admin/events"
+  element={<AdminEvents />}
+/>
       </Routes>
     </BrowserRouter>
   );
