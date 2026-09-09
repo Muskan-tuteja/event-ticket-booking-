@@ -1,66 +1,53 @@
-import { Link } from "react-router-dom";
+import { Bell, Search } from "lucide-react";
 
-export default function AdminHeader() {
+interface Props {
+  title: string;
+  subtitle?: string;
+}
+
+export default function AdminHeader({ title, subtitle }: Props) {
   return (
-    <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b bg-white/95 px-6 backdrop-blur md:px-8">
+    <header className="sticky top-0 z-20 flex h-20 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-5 md:px-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+          Admin Portal
+        </p>
 
-      {/* MOBILE LOGO */}
-      <div className="lg:hidden">
-        <h1 className="text-xl font-black">
-          PRAPT
+        <h1 className="mt-1 text-xl font-black text-gray-950 md:text-2xl">
+          {title}
         </h1>
 
-        <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
-          Admin
-        </p>
+        {subtitle && (
+          <p className="mt-1 hidden text-sm text-gray-500 md:block">
+            {subtitle}
+          </p>
+        )}
       </div>
 
-      {/* DESKTOP TITLE */}
-      <div className="hidden lg:block">
-        <p className="text-sm text-gray-400">
-          Welcome back
-        </p>
-
-        <p className="font-bold">
-          Platform Administrator
-        </p>
-      </div>
-
-      {/* RIGHT */}
       <div className="flex items-center gap-3">
+        <button className="hidden h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition hover:bg-gray-50 md:flex">
+          <Search size={18} />
+        </button>
 
-        {/* Notifications */}
-        <button
-          className="relative flex h-11 w-11 items-center justify-center rounded-xl border text-lg transition hover:bg-gray-50"
-          aria-label="Notifications"
-        >
-          🔔
+        <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition hover:bg-gray-50">
+          <Bell size={18} />
 
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-black" />
         </button>
 
-        {/* Profile */}
-        <Link
-          to="/admin/settings"
-          className="flex items-center gap-3 rounded-xl border px-3 py-2 transition hover:bg-gray-50"
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-xs font-bold text-white">
+        <div className="hidden h-8 w-px bg-gray-200 md:block" />
+
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-sm font-bold text-white">
             A
           </div>
 
-          <div className="hidden text-left sm:block">
-            <p className="text-sm font-bold">
-              Admin
-            </p>
-
-            <p className="text-[11px] text-gray-400">
-              Administrator
-            </p>
+          <div className="hidden md:block">
+            <p className="text-sm font-bold text-gray-900">Admin</p>
+            <p className="text-xs text-gray-400">Administrator</p>
           </div>
-        </Link>
-
+        </div>
       </div>
-
     </header>
   );
 }

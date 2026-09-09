@@ -1,80 +1,69 @@
+import {
+  CalendarDays,
+  Ticket,
+  IndianRupee,
+  Users,
+  ArrowUpRight,
+  MoreHorizontal,
+  CheckCircle2,
+  Clock3,
+} from "lucide-react";
+
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import { Link } from "react-router-dom";
 
 const stats = [
   {
-    title: "Total Revenue",
-    value: "₹24.8L",
+    title: "Total Events",
+    value: "128",
     change: "+12.5%",
-    icon: "₹",
-  },
-  {
-    title: "Total Orders",
-    value: "3,842",
-    change: "+8.2%",
-    icon: "▤",
+    icon: CalendarDays,
   },
   {
     title: "Tickets Sold",
-    value: "8,426",
+    value: "18,420",
+    change: "+18.2%",
+    icon: Ticket,
+  },
+  {
+    title: "Total Revenue",
+    value: "₹24.8L",
     change: "+14.8%",
-    icon: "🎫",
+    icon: IndianRupee,
   },
   {
     title: "Customers",
-    value: "5,284",
-    change: "+6.4%",
-    icon: "♙",
+    value: "8,642",
+    change: "+9.4%",
+    icon: Users,
   },
 ];
 
-const recentOrders = [
+const events = [
   {
-    id: "#PR-10245",
-    customer: "Rahul Sharma",
-    event: "Music Fest 2026",
-    amount: "₹998",
-    status: "Completed",
+    title: "Music Fest 2026",
+    organizer: "Live Nation India",
+    location: "Gurugram",
+    date: "20 Sep 2026",
+    tickets: "540",
+    status: "Approved",
   },
   {
-    id: "#PR-10244",
-    customer: "Ananya Singh",
-    event: "Tech Summit 2026",
-    amount: "₹799",
-    status: "Completed",
-  },
-  {
-    id: "#PR-10243",
-    customer: "Aman Verma",
-    event: "Comedy Night",
-    amount: "₹399",
+    title: "Tech Summit 2026",
+    organizer: "Tech Community",
+    location: "Noida",
+    date: "25 Sep 2026",
+    tickets: "320",
     status: "Pending",
   },
   {
-    id: "#PR-10242",
-    customer: "Priya Mehta",
-    event: "Music Fest 2026",
-    amount: "₹1,497",
-    status: "Completed",
-  },
-];
-
-const pendingEvents = [
-  {
-    name: "Delhi Startup Expo",
-    organizer: "Startup India",
-    date: "30 Sep 2026",
-  },
-  {
-    name: "Live DJ Night",
-    organizer: "Urban Events",
-    date: "04 Oct 2026",
-  },
-  {
-    name: "Design Conference",
-    organizer: "Creative Hub",
-    date: "10 Oct 2026",
+    title: "Comedy Night",
+    organizer: "Laugh Factory",
+    location: "Delhi",
+    date: "28 Sep 2026",
+    tickets: "210",
+    status: "Approved",
   },
 ];
 
@@ -82,180 +71,184 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#f7f7f8]">
 
+      {/* ================= SIDEBAR ================= */}
       <AdminSidebar />
 
-      <div className="lg:pl-64">
+      {/* ================= MAIN CONTENT ================= */}
+      <div className="min-h-screen lg:ml-[274px]">
 
-        <AdminHeader />
+        {/* HEADER */}
+        <AdminHeader
+          title="Dashboard"
+          subtitle="Overview of your PRAPT platform."
+        />
 
         <main className="p-5 md:p-8">
 
-          {/* PAGE TITLE */}
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          {/* ================= WELCOME ================= */}
+          <section className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
 
             <div>
-              <p className="text-sm font-semibold text-gray-400">
-                ADMINISTRATION
+              <p className="text-sm font-semibold text-gray-500">
+                Welcome back, Admin 👋
               </p>
 
-              <h2 className="mt-1 text-3xl font-black tracking-tight md:text-4xl">
-                Dashboard
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-gray-950 md:text-4xl">
+                Platform overview
               </h2>
 
-              <p className="mt-2 text-gray-500">
-                Overview of your PRAPT event platform.
+              <p className="mt-2 text-sm text-gray-500">
+                Monitor events, sales and platform activity.
               </p>
             </div>
 
             <Link
               to="/admin/events"
-              className="w-fit rounded-xl bg-black px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
+              className="inline-flex w-fit items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
             >
-              Manage Events →
+              Manage Events
+              <ArrowUpRight size={17} />
             </Link>
 
-          </div>
+          </section>
 
-          {/* STATS */}
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {/* ================= STATS ================= */}
+          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
-            {stats.map((stat) => (
-              <div
-                key={stat.title}
-                className="rounded-2xl border bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
+            {stats.map((stat) => {
+              const Icon = stat.icon;
 
-                <div className="flex items-start justify-between">
+              return (
+                <div
+                  key={stat.title}
+                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                >
 
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 text-lg font-bold">
-                    {stat.icon}
+                  <div className="flex items-start justify-between">
+
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        {stat.title}
+                      </p>
+
+                      <h3 className="mt-2 text-3xl font-black tracking-tight text-gray-950">
+                        {stat.value}
+                      </h3>
+                    </div>
+
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100">
+                      <Icon size={20} />
+                    </div>
+
                   </div>
 
-                  <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-600">
-                    {stat.change}
-                  </span>
+                  <div className="mt-5 flex items-center gap-2 text-xs font-semibold">
+
+                    <span className="rounded-full bg-green-50 px-2 py-1 text-green-700">
+                      {stat.change}
+                    </span>
+
+                    <span className="text-gray-400">
+                      vs last month
+                    </span>
+
+                  </div>
 
                 </div>
+              );
+            })}
 
-                <p className="mt-5 text-sm font-medium text-gray-500">
-                  {stat.title}
-                </p>
+          </section>
 
-                <h3 className="mt-1 text-2xl font-black">
-                  {stat.value}
-                </h3>
+          {/* ================= CONTENT ================= */}
+          <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
 
-              </div>
-            ))}
+            {/* ================= RECENT EVENTS ================= */}
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-          </div>
-
-          {/* CHART + PENDING EVENTS */}
-          <div className="mt-6 grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-
-            {/* REVENUE CHART */}
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border-b border-gray-100 p-6">
 
                 <div>
-                  <h3 className="text-lg font-black">
-                    Revenue Overview
+                  <h3 className="font-black text-gray-950">
+                    Recent Events
                   </h3>
 
                   <p className="mt-1 text-sm text-gray-500">
-                    Platform revenue for the last 6 months
-                  </p>
-                </div>
-
-                <select className="rounded-lg border bg-white px-3 py-2 text-sm outline-none">
-                  <option>Last 6 months</option>
-                  <option>Last 30 days</option>
-                  <option>This year</option>
-                </select>
-
-              </div>
-
-              <div className="mt-8 flex h-64 items-end gap-3 border-b border-l px-4 pb-0">
-
-                {[42, 55, 48, 72, 65, 88, 78, 96, 82, 100, 90, 115].map(
-                  (height, index) => (
-                    <div
-                      key={index}
-                      className="group flex h-full flex-1 items-end"
-                    >
-                      <div
-                        style={{ height: `${height * 1.6}px` }}
-                        className="w-full rounded-t-lg bg-black transition group-hover:bg-gray-700"
-                      />
-                    </div>
-                  )
-                )}
-
-              </div>
-
-              <div className="mt-3 flex justify-between px-2 text-xs text-gray-400">
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-                <span>Aug</span>
-                <span>Sep</span>
-              </div>
-
-            </div>
-
-            {/* PENDING EVENTS */}
-            <div className="rounded-2xl border bg-white p-6 shadow-sm">
-
-              <div className="flex items-center justify-between">
-
-                <div>
-                  <h3 className="text-lg font-black">
-                    Pending Approval
-                  </h3>
-
-                  <p className="mt-1 text-sm text-gray-500">
-                    Events waiting for review
+                    Latest events submitted on PRAPT
                   </p>
                 </div>
 
                 <Link
                   to="/admin/events"
-                  className="text-sm font-bold underline"
+                  className="text-sm font-bold text-gray-900 underline underline-offset-4"
                 >
                   View all
                 </Link>
 
               </div>
 
-              <div className="mt-6 space-y-4">
+              <div>
 
-                {pendingEvents.map((event) => (
+                {events.map((event) => (
                   <div
-                    key={event.name}
-                    className="rounded-xl border p-4 transition hover:bg-gray-50"
+                    key={event.title}
+                    className="flex flex-col gap-4 border-b border-gray-100 p-5 last:border-0 sm:flex-row sm:items-center sm:justify-between"
                   >
 
-                    <div className="flex items-start justify-between gap-3">
+                    {/* EVENT INFO */}
+                    <div className="flex min-w-0 items-center gap-4">
 
-                      <div>
-                        <h4 className="font-bold">
-                          {event.name}
-                        </h4>
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-100">
+                        <CalendarDays size={19} />
+                      </div>
 
-                        <p className="mt-1 text-xs text-gray-500">
+                      <div className="min-w-0">
+
+                        <p className="truncate font-bold text-gray-950">
+                          {event.title}
+                        </p>
+
+                        <p className="mt-1 text-sm text-gray-500">
                           {event.organizer}
                         </p>
 
-                        <p className="mt-2 text-xs text-gray-400">
-                          📅 {event.date}
+                        <p className="mt-1 text-xs text-gray-400">
+                          {event.location} • {event.date}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    {/* EVENT STATUS */}
+                    <div className="flex shrink-0 items-center justify-between gap-5 sm:justify-end">
+
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-gray-950">
+                          {event.tickets}
+                        </p>
+
+                        <p className="text-xs text-gray-400">
+                          tickets
                         </p>
                       </div>
 
-                      <span className="rounded-full bg-yellow-50 px-2.5 py-1 text-[11px] font-bold text-yellow-700">
-                        Pending
+                      <span
+                        className={`rounded-full px-3 py-1.5 text-xs font-bold ${
+                          event.status === "Approved"
+                            ? "bg-green-50 text-green-700"
+                            : "bg-yellow-50 text-yellow-700"
+                        }`}
+                      >
+                        {event.status}
                       </span>
+
+                      <button
+                        type="button"
+                        className="text-gray-400 transition hover:text-black"
+                      >
+                        <MoreHorizontal size={18} />
+                      </button>
 
                     </div>
 
@@ -266,116 +259,145 @@ export default function AdminDashboard() {
 
             </div>
 
-          </div>
+            {/* ================= PLATFORM ACTIVITY ================= */}
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-          {/* RECENT ORDERS */}
-          <div className="mt-6 rounded-2xl border bg-white shadow-sm">
+              <div className="border-b border-gray-100 p-6">
 
-            <div className="flex flex-col justify-between gap-3 border-b p-6 sm:flex-row sm:items-center">
-
-              <div>
-                <h3 className="text-lg font-black">
-                  Recent Orders
+                <h3 className="font-black text-gray-950">
+                  Platform Activity
                 </h3>
 
                 <p className="mt-1 text-sm text-gray-500">
-                  Latest ticket transactions
+                  Latest admin activity
+                </p>
+
+              </div>
+
+              <div className="space-y-6 p-6">
+
+                <div className="flex gap-3">
+
+                  <CheckCircle2
+                    className="mt-0.5 shrink-0 text-green-600"
+                    size={20}
+                  />
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      Music Fest 2026 approved
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-400">
+                      12 minutes ago
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="flex gap-3">
+
+                  <Clock3
+                    className="mt-0.5 shrink-0 text-yellow-600"
+                    size={20}
+                  />
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      Tech Summit waiting for approval
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-400">
+                      35 minutes ago
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="flex gap-3">
+
+                  <Users
+                    className="mt-0.5 shrink-0 text-gray-600"
+                    size={20}
+                  />
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      24 new customers registered
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-400">
+                      1 hour ago
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </section>
+
+          {/* ================= SALES OVERVIEW ================= */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+
+              <div>
+                <h3 className="font-black text-gray-950">
+                  Ticket Sales Overview
+                </h3>
+
+                <p className="mt-1 text-sm text-gray-500">
+                  Sales performance this month
                 </p>
               </div>
 
-              <Link
-                to="/admin/orders"
-                className="text-sm font-bold underline"
-              >
-                View all orders →
-              </Link>
+              <span className="w-fit rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600">
+                September 2026
+              </span>
 
             </div>
 
-            {/* TABLE */}
-            <div className="overflow-x-auto">
+            {/* CHART */}
+            <div className="mt-8">
 
-              <table className="w-full min-w-[700px] text-left">
+              <div className="flex h-48 items-end gap-2 sm:gap-3">
 
-                <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-400">
-
-                  <tr>
-                    <th className="px-6 py-4 font-bold">
-                      Order
-                    </th>
-
-                    <th className="px-6 py-4 font-bold">
-                      Customer
-                    </th>
-
-                    <th className="px-6 py-4 font-bold">
-                      Event
-                    </th>
-
-                    <th className="px-6 py-4 font-bold">
-                      Amount
-                    </th>
-
-                    <th className="px-6 py-4 font-bold">
-                      Status
-                    </th>
-                  </tr>
-
-                </thead>
-
-                <tbody className="divide-y">
-
-                  {recentOrders.map((order) => (
-                    <tr
-                      key={order.id}
-                      className="transition hover:bg-gray-50"
+                {[35, 52, 45, 70, 58, 82, 65, 91, 76, 84, 70, 96].map(
+                  (height, index) => (
+                    <div
+                      key={index}
+                      className="flex h-full flex-1 items-end"
                     >
+                      <div
+                        style={{
+                          height: `${height}%`,
+                        }}
+                        className="w-full rounded-t-lg bg-black transition hover:bg-gray-700"
+                      />
+                    </div>
+                  )
+                )}
 
-                      <td className="px-6 py-4 text-sm font-bold">
-                        {order.id}
-                      </td>
+              </div>
 
-                      <td className="px-6 py-4 text-sm">
-                        {order.customer}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {order.event}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm font-bold">
-                        {order.amount}
-                      </td>
-
-                      <td className="px-6 py-4">
-
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
-                            order.status === "Completed"
-                              ? "bg-green-50 text-green-700"
-                              : "bg-yellow-50 text-yellow-700"
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-
-                      </td>
-
-                    </tr>
-                  ))}
-
-                </tbody>
-
-              </table>
+              <div className="mt-3 flex justify-between text-xs text-gray-400">
+                <span>Sep 1</span>
+                <span>Sep 7</span>
+                <span>Sep 14</span>
+                <span>Sep 21</span>
+                <span>Sep 30</span>
+              </div>
 
             </div>
 
-          </div>
+          </section>
 
         </main>
 
       </div>
-
     </div>
   );
 }

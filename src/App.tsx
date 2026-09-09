@@ -21,6 +21,9 @@ import Settings from "./pages/organizer/Settings";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminEvents from "./pages/admin/Events";
+import AdminLayout from "./pages/admin/AdminLayout";
+
+// import EventsManagement from "./pages/admin/EventsManagement";
 function App() {
   return (
     <BrowserRouter>
@@ -64,6 +67,8 @@ function App() {
   path="/admin/events"
   element={<AdminEvents />}
 />
+<Route path="/admin" element={<AdminLayout />}></Route>
+
       </Routes>
     </BrowserRouter>
   );
