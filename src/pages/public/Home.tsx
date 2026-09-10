@@ -8,24 +8,28 @@ const categories = [
     count: "120+ Events",
     icon: "♪",
     description: "Concerts & live shows",
+    image:"/categories/Music.jpg",
   },
   {
     name: "Technology",
     count: "80+ Events",
     icon: "</>",
     description: "Tech & innovation",
+    image:"/categories/Technology.jpg",
   },
   {
     name: "Comedy",
     count: "45+ Events",
     icon: "☺",
     description: "Laugh & have fun",
+    image:"/categories/Comedy.jpg",
   },
   {
     name: "Arts & Culture",
     count: "60+ Events",
     icon: "✦",
     description: "Art & experiences",
+    image:"/categories/Arts.jpg",
   },
 ];
 
@@ -443,65 +447,83 @@ export default function Home() {
       ========================================================= */}
 
       <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 lg:py-24">
-        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-500">
-              Explore
-            </p>
+  <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+    <div>
+      <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-500">
+        Explore
+      </p>
 
-            <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
-              Browse by category
-            </h2>
+      <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
+        Browse by category
+      </h2>
 
-            <p className="mt-3 text-gray-500">
-              Find something that matches your vibe.
-            </p>
+      <p className="mt-3 text-gray-500">
+        Find something that matches your vibe.
+      </p>
+    </div>
+
+    <Link
+      to="/events"
+      className="w-fit text-sm font-bold underline underline-offset-4 transition hover:text-violet-600"
+    >
+      View all events →
+    </Link>
+  </div>
+
+  <div className="mt-9 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    {categories.map((category) => (
+      <Link
+        key={category.name}
+        to="/events"
+        className="group relative min-h-[330px] overflow-hidden rounded-[28px] bg-black text-white shadow-sm transition duration-500 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(0,0,0,0.18)]"
+      >
+        {/* Background Image */}
+        <img
+          src={category.image}
+          alt={`${category.name} events`}
+          className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
+        />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
+
+        {/* Violet Hover Overlay */}
+        <div className="absolute inset-0 bg-violet-900/0 transition duration-500 group-hover:bg-violet-900/25" />
+
+        {/* Content */}
+        <div className="relative flex min-h-[330px] flex-col p-6">
+          {/* Icon + Arrow */}
+          <div className="flex items-center justify-between">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-black/35 text-xl font-black text-white backdrop-blur-md transition duration-300 group-hover:rotate-3 group-hover:bg-white group-hover:text-black">
+              {category.icon}
+            </div>
+
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-white/70 backdrop-blur-md transition duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-black">
+              →
+            </span>
           </div>
 
-          <Link
-            to="/events"
-            className="w-fit text-sm font-bold underline underline-offset-4"
-          >
-            View all events →
-          </Link>
+          {/* Bottom Content */}
+          <div className="mt-auto">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-violet-300">
+              {category.count}
+            </p>
+
+            <h3 className="text-2xl font-black tracking-tight">
+              {category.name}
+            </h3>
+
+            <p className="mt-2 max-w-[220px] text-sm leading-5 text-white/65">
+              {category.description}
+            </p>
+
+            <div className="mt-5 h-px w-10 bg-white/30 transition-all duration-500 group-hover:w-20 group-hover:bg-violet-300" />
+          </div>
         </div>
-
-        <div className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((category) => (
-            <Link
-              key={category.name}
-              to="/events"
-              className="group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-6 transition duration-300 hover:-translate-y-1.5 hover:border-gray-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
-            >
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-50 transition duration-500 group-hover:scale-150" />
-
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-950 text-lg font-black text-white transition duration-300 group-hover:rotate-3 group-hover:bg-violet-600">
-                    {category.icon}
-                  </div>
-
-                  <span className="text-gray-300 transition duration-300 group-hover:translate-x-1 group-hover:text-black">
-                    →
-                  </span>
-                </div>
-
-                <h3 className="mt-7 text-lg font-black">
-                  {category.name}
-                </h3>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  {category.description}
-                </p>
-
-                <p className="mt-4 text-xs font-bold uppercase tracking-wider text-gray-400">
-                  {category.count}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      </Link>
+    ))}
+  </div>
+</section>
 
       {/* =========================================================
           FEATURED EVENTS
