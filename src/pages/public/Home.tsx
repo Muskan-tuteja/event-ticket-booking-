@@ -8,28 +8,28 @@ const categories = [
     count: "120+ Events",
     icon: "♪",
     description: "Concerts & live shows",
-    image:"/categories/Music.jpg",
+    image:"/src/assests/categories/Music.jpg",
   },
   {
     name: "Technology",
     count: "80+ Events",
     icon: "</>",
     description: "Tech & innovation",
-    image:"/categories/Technology.jpg",
+    image:"/src/assests/categories/Technology.jpg",
   },
   {
     name: "Comedy",
     count: "45+ Events",
     icon: "☺",
     description: "Laugh & have fun",
-    image:"/categories/Comedy.jpg",
+    image:"/src/assests/categories/Comedy.jpg",
   },
   {
     name: "Arts & Culture",
     count: "60+ Events",
     icon: "✦",
     description: "Art & experiences",
-    image:"/categories/Arts.jpg",
+    image:"/src/assests/categories/Arts.jpg",
   },
 ];
 
@@ -38,25 +38,25 @@ const locations = [
     name: "Delhi",
     events: "240 Events",
     tag: "Capital vibes",
-     image:"/location/Delhi.jpg",
+     image:"/src/assests/location/Delhi.jpg",
   },
   {
     name: "Gurugram",
     events: "180 Events",
     tag: "Urban experiences",
-     image:"/location/Gurugram.jpg",
+     image:"/src/assests/location/Gurugram.jpg",
   },
   {
     name: "Noida",
     events: "120 Events",
     tag: "Something happening",
-     image:"/location/Noida.jpg",
+     image:"/src/assests/location/Noida.jpg",
   },
   {
     name: "Mumbai",
     events: "320 Events",
     tag: "City that never sleeps",
-    image:"/location/Mumbai.jpg",
+    image:"/src/assests/location/Mumbai.jpg",
   },
 ];
 
@@ -98,25 +98,25 @@ const events = [
 const heroSlides = [
   {
     type: "image",
-    src: "/hero/hero-1.jpg",
+    src: "/src/assests/hero/hero-1.jpg",
     title: "Live the moment.",
     text: "Discover unforgettable experiences.",
   },
   {
     type: "image",
-    src: "/hero/hero-2.jpg",
+    src: "/src/assests/hero/hero-2.jpg",
     title: "Feel the energy.",
     text: "Music, comedy, culture and more.",
   },
   {
     type: "image",
-    src: "/hero/hero-3.jpg",
+    src: "/src/assests/hero/hero-3.jpg",
     title: "Make memories.",
     text: "Find your next experience with PRAPT.",
   },
   {
     type: "video",
-    src: "/hero/night_event_video.mp4",
+    src: "/src/assests/hero/night_event_video.mp4",
     title: "Your next experience.",
     text: "Book. Experience. Remember.",
   },
