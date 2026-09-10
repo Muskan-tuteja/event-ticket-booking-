@@ -1,35 +1,48 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/public/Navbar";
+import categoryMusic from "../../assests/categories/Music.jpg";
+import categoryTechnology from "../../assests/categories/Technology.jpg";
+import categoryComedy from "../../assests/categories/Comedy.jpg";
+import categoryArts from "../../assests/categories/Arts.jpg";
 
+import locationDelhi from "../../assests/location/Delhi.jpg";
+import locationGurugram from "../../assests/location/Gurugram.jpg";
+import locationNoida from "../../assests/location/Noida.jpg";
+import locationMumbai from "../../assests/location/Mumbai.jpg";
+
+import hero1 from "../../assests/hero/hero-1.jpg";
+import hero2 from "../../assests/hero/hero-2.jpg";
+import hero3 from "../../assests/hero/hero-3.jpg";
+import heroVideo from "../../assests/hero/night_event_video.mp4";
 const categories = [
   {
     name: "Music",
     count: "120+ Events",
     icon: "♪",
     description: "Concerts & live shows",
-    image:"/src/assests/categories/Music.jpg",
+    image: categoryMusic,
   },
   {
     name: "Technology",
     count: "80+ Events",
     icon: "</>",
     description: "Tech & innovation",
-    image:"/src/assests/categories/Technology.jpg",
+    image: categoryTechnology,
   },
   {
     name: "Comedy",
     count: "45+ Events",
     icon: "☺",
     description: "Laugh & have fun",
-    image:"/src/assests/categories/Comedy.jpg",
+    image: categoryComedy,
   },
   {
     name: "Arts & Culture",
     count: "60+ Events",
     icon: "✦",
     description: "Art & experiences",
-    image:"/src/assests/categories/Arts.jpg",
+    image: categoryArts,
   },
 ];
 
@@ -38,25 +51,25 @@ const locations = [
     name: "Delhi",
     events: "240 Events",
     tag: "Capital vibes",
-     image:"/src/assests/location/Delhi.jpg",
+    image: locationDelhi,
   },
   {
     name: "Gurugram",
     events: "180 Events",
     tag: "Urban experiences",
-     image:"/src/assests/location/Gurugram.jpg",
+    image: locationGurugram,
   },
   {
     name: "Noida",
     events: "120 Events",
     tag: "Something happening",
-     image:"/src/assests/location/Noida.jpg",
+    image: locationNoida,
   },
   {
     name: "Mumbai",
     events: "320 Events",
     tag: "City that never sleeps",
-    image:"/src/assests/location/Mumbai.jpg",
+    image: locationMumbai,
   },
 ];
 
@@ -98,25 +111,25 @@ const events = [
 const heroSlides = [
   {
     type: "image",
-    src: "/src/assests/hero/hero-1.jpg",
+    src: hero1,
     title: "Live the moment.",
     text: "Discover unforgettable experiences.",
   },
   {
     type: "image",
-    src: "/src/assests/hero/hero-2.jpg",
+    src: hero2,
     title: "Feel the energy.",
     text: "Music, comedy, culture and more.",
   },
   {
     type: "image",
-    src: "/src/assests/hero/hero-3.jpg",
+    src: hero3,
     title: "Make memories.",
     text: "Find your next experience with PRAPT.",
   },
   {
     type: "video",
-    src: "/src/assests/hero/night_event_video.mp4",
+    src: heroVideo,
     title: "Your next experience.",
     text: "Book. Experience. Remember.",
   },
