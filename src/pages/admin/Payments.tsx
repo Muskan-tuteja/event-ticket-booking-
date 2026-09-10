@@ -2,158 +2,160 @@ import { useMemo, useState } from "react";
 import {
   Search,
   MoreHorizontal,
-  Ticket,
+  CreditCard,
+  IndianRupee,
   CheckCircle2,
   Clock3,
-  ScanLine,
-  Ban,
+  XCircle,
+  RotateCcw,
 } from "lucide-react";
 
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 
-type TicketStatus = "Valid" | "Used" | "Cancelled";
+type PaymentStatus = "Successful" | "Pending" | "Failed" | "Refunded";
 
-interface TicketItem {
+interface Payment {
   id: string;
+  orderId: string;
   customer: string;
   email: string;
   event: string;
-  type: "General" | "VIP" | "Early Bird";
-  price: number;
-  issued: string;
-  status: TicketStatus;
+  amount: number;
+  method: string;
+  date: string;
+  status: PaymentStatus;
 }
 
-const initialTickets: TicketItem[] = [
+const initialPayments: Payment[] = [
   {
-    id: "TKT-48291",
+    id: "pay_RP82191",
+    orderId: "PRP-10021",
     customer: "Aarav Sharma",
     email: "aarav.sharma@gmail.com",
     event: "Music Fest 2026",
-    type: "General",
-    price: 499,
-    issued: "10 Sep 2026",
-    status: "Valid",
+    amount: 998,
+    method: "UPI",
+    date: "10 Sep 2026, 10:42 AM",
+    status: "Successful",
   },
   {
-    id: "TKT-48290",
+    id: "pay_RP82190",
+    orderId: "PRP-10020",
     customer: "Priya Mehta",
     email: "priya.mehta@gmail.com",
     event: "Tech Summit 2026",
-    type: "VIP",
-    price: 799,
-    issued: "09 Sep 2026",
-    status: "Valid",
+    amount: 799,
+    method: "Card",
+    date: "09 Sep 2026, 08:16 PM",
+    status: "Successful",
   },
   {
-    id: "TKT-48289",
+    id: "pay_RP82189",
+    orderId: "PRP-10019",
     customer: "Rohan Verma",
     email: "rohan.verma@gmail.com",
     event: "Comedy Night",
-    type: "General",
-    price: 399,
-    issued: "09 Sep 2026",
-    status: "Used",
+    amount: 1197,
+    method: "UPI",
+    date: "09 Sep 2026, 06:25 PM",
+    status: "Pending",
   },
   {
-    id: "TKT-48288",
+    id: "pay_RP82188",
+    orderId: "PRP-10018",
     customer: "Neha Kapoor",
     email: "neha.kapoor@gmail.com",
     event: "Music Fest 2026",
-    type: "Early Bird",
-    price: 399,
-    issued: "08 Sep 2026",
-    status: "Cancelled",
+    amount: 998,
+    method: "Net Banking",
+    date: "08 Sep 2026, 04:51 PM",
+    status: "Failed",
   },
   {
-    id: "TKT-48287",
+    id: "pay_RP82187",
+    orderId: "PRP-10017",
     customer: "Karan Singh",
     email: "karan.singh@gmail.com",
     event: "Tech Summit 2026",
-    type: "VIP",
-    price: 799,
-    issued: "07 Sep 2026",
-    status: "Valid",
+    amount: 1598,
+    method: "UPI",
+    date: "07 Sep 2026, 11:32 AM",
+    status: "Refunded",
   },
   {
-    id: "TKT-48286",
+    id: "pay_RP82186",
+    orderId: "PRP-10016",
     customer: "Simran Kaur",
     email: "simran.kaur@gmail.com",
     event: "Comedy Night",
-    type: "General",
-    price: 399,
-    issued: "06 Sep 2026",
-    status: "Used",
+    amount: 798,
+    method: "Card",
+    date: "06 Sep 2026, 09:48 PM",
+    status: "Successful",
   },
   {
-    id: "TKT-48285",
+    id: "pay_RP82185",
+    orderId: "PRP-10015",
     customer: "Rahul Gupta",
     email: "rahul.gupta@gmail.com",
     event: "Music Fest 2026",
-    type: "VIP",
-    price: 999,
-    issued: "05 Sep 2026",
-    status: "Valid",
+    amount: 999,
+    method: "UPI",
+    date: "05 Sep 2026, 02:19 PM",
+    status: "Successful",
   },
 ];
 
-export default function Tickets() {
-  const [tickets, setTickets] =
-    useState<TicketItem[]>(initialTickets);
+export default function Payments() {
+  const [payments, setPayments] =
+    useState<Payment[]>(initialPayments);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  const filteredTickets = useMemo(() => {
-    return tickets.filter((ticket) => {
+  const filteredPayments = useMemo(() => {
+    return payments.filter((payment) => {
       const value = search.toLowerCase();
 
       const matchesSearch =
-        ticket.id.toLowerCase().includes(value) ||
-        ticket.customer.toLowerCase().includes(value) ||
-        ticket.email.toLowerCase().includes(value) ||
-        ticket.event.toLowerCase().includes(value);
+        payment.id.toLowerCase().includes(value) ||
+        payment.orderId.toLowerCase().includes(value) ||
+        payment.customer.toLowerCase().includes(value) ||
+        payment.email.toLowerCase().includes(value) ||
+        payment.event.toLowerCase().includes(value);
 
       const matchesStatus =
         statusFilter === "All" ||
-        ticket.status === statusFilter;
+        payment.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [tickets, search, statusFilter]);
+  }, [payments, search, statusFilter]);
 
-  const validTickets = tickets.filter(
-    (ticket) => ticket.status === "Valid"
+  const successfulPayments = payments.filter(
+    (payment) => payment.status === "Successful"
   ).length;
 
-  const usedTickets = tickets.filter(
-    (ticket) => ticket.status === "Used"
+  const pendingPayments = payments.filter(
+    (payment) => payment.status === "Pending"
   ).length;
 
-  const cancelledTickets = tickets.filter(
-    (ticket) => ticket.status === "Cancelled"
+  const failedPayments = payments.filter(
+    (payment) => payment.status === "Failed"
   ).length;
 
-  const checkInTicket = (id: string) => {
-    setTickets((current) =>
-      current.map((ticket) =>
-        ticket.id === id
-          ? { ...ticket, status: "Used" }
-          : ticket
-      )
-    );
+  const successfulRevenue = payments
+    .filter((payment) => payment.status === "Successful")
+    .reduce((sum, payment) => sum + payment.amount, 0);
 
-    setOpenMenu(null);
-  };
-
-  const cancelTicket = (id: string) => {
-    setTickets((current) =>
-      current.map((ticket) =>
-        ticket.id === id
-          ? { ...ticket, status: "Cancelled" }
-          : ticket
+  const refundPayment = (id: string) => {
+    setPayments((current) =>
+      current.map((payment) =>
+        payment.id === id
+          ? { ...payment, status: "Refunded" }
+          : payment
       )
     );
 
@@ -166,8 +168,8 @@ export default function Tickets() {
 
       <div className="min-h-screen lg:ml-[274px]">
         <AdminHeader
-          title="Tickets"
-          subtitle="Monitor issued tickets, QR codes and check-in status."
+          title="Payments"
+          subtitle="Monitor transactions, payment status and refunds."
         />
 
         <main className="p-5 md:p-8">
@@ -175,27 +177,24 @@ export default function Tickets() {
           {/* HEADER */}
           <div className="mb-7">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-gray-400">
-              Ticket Management
+              Financial Management
             </p>
 
             <div className="mt-2 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
                 <h1 className="text-3xl font-black tracking-tight text-gray-950">
-                  All Tickets
+                  Payments
                 </h1>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  Track every ticket generated through the PRAPT platform.
+                  Track Razorpay transactions and customer payments.
                 </p>
               </div>
 
-              <button
-                type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
-              >
-                <ScanLine size={17} />
-                Open Scanner
-              </button>
+              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-600 shadow-sm">
+                <CreditCard size={17} />
+                Razorpay
+              </div>
             </div>
           </div>
 
@@ -203,41 +202,40 @@ export default function Tickets() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 
             <SummaryCard
-              title="Total Tickets"
-              value={tickets.length.toString()}
-              icon={<Ticket size={20} />}
-              description="All issued tickets"
-            />
-
-            <SummaryCard
-              title="Valid"
-              value={validTickets.toString()}
+              title="Successful"
+              value={successfulPayments.toString()}
               icon={<CheckCircle2 size={20} />}
-              description="Ready for entry"
+              description="Completed payments"
             />
 
             <SummaryCard
-              title="Checked In"
-              value={usedTickets.toString()}
-              icon={<ScanLine size={20} />}
-              description="Successfully scanned"
+              title="Pending"
+              value={pendingPayments.toString()}
+              icon={<Clock3 size={20} />}
+              description="Awaiting confirmation"
             />
 
             <SummaryCard
-              title="Cancelled"
-              value={cancelledTickets.toString()}
-              icon={<Ban size={20} />}
-              description="Cancelled tickets"
+              title="Failed"
+              value={failedPayments.toString()}
+              icon={<XCircle size={20} />}
+              description="Unsuccessful payments"
+            />
+
+            <SummaryCard
+              title="Revenue"
+              value={`₹${successfulRevenue.toLocaleString()}`}
+              icon={<IndianRupee size={20} />}
+              description="Successful transactions"
             />
 
           </div>
 
-          {/* TABLE CARD */}
+          {/* TABLE */}
           <section className="mt-7 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
             {/* FILTER BAR */}
             <div className="border-b border-gray-100 p-5">
-
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
                 <div className="relative w-full lg:max-w-md">
@@ -249,7 +247,7 @@ export default function Tickets() {
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search ticket, customer or event..."
+                    placeholder="Search payment, order or customer..."
                     className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm outline-none transition focus:border-gray-400 focus:bg-white"
                   />
                 </div>
@@ -257,9 +255,10 @@ export default function Tickets() {
                 <div className="flex flex-wrap gap-2">
                   {[
                     "All",
-                    "Valid",
-                    "Used",
-                    "Cancelled",
+                    "Successful",
+                    "Pending",
+                    "Failed",
+                    "Refunded",
                   ].map((status) => (
                     <button
                       key={status}
@@ -281,13 +280,13 @@ export default function Tickets() {
 
             {/* TABLE */}
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1100px]">
+              <table className="w-full min-w-[1200px]">
 
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/70 text-left">
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
-                      Ticket
+                      Payment
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
@@ -299,15 +298,15 @@ export default function Tickets() {
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
-                      Type
+                      Amount
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
-                      Price
+                      Method
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
-                      Issued
+                      Date
                     </th>
 
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">
@@ -322,73 +321,84 @@ export default function Tickets() {
                 </thead>
 
                 <tbody>
-                  {filteredTickets.map((ticket) => (
+                  {filteredPayments.map((payment) => (
                     <tr
-                      key={ticket.id}
+                      key={payment.id}
                       className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60"
                     >
 
-                      {/* TICKET */}
+                      {/* PAYMENT */}
+                      <td className="px-5 py-5">
+                        <p className="font-bold text-gray-950">
+                          {payment.id}
+                        </p>
+
+                        <p className="mt-1 text-xs text-gray-400">
+                          Order: {payment.orderId}
+                        </p>
+                      </td>
+
+                      {/* CUSTOMER */}
                       <td className="px-5 py-5">
                         <div className="flex items-center gap-3">
 
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white">
-                            <Ticket size={17} />
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-xs font-black">
+                            {payment.customer
+                              .split(" ")
+                              .map((word) => word[0])
+                              .join("")
+                              .slice(0, 2)}
                           </div>
 
                           <div>
-                            <p className="font-bold text-gray-950">
-                              {ticket.id}
+                            <p className="text-sm font-bold text-gray-900">
+                              {payment.customer}
                             </p>
 
                             <p className="mt-1 text-xs text-gray-400">
-                              QR enabled
+                              {payment.email}
                             </p>
                           </div>
 
                         </div>
                       </td>
 
-                      {/* CUSTOMER */}
-                      <td className="px-5 py-5">
-                        <p className="text-sm font-bold text-gray-900">
-                          {ticket.customer}
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-400">
-                          {ticket.email}
-                        </p>
-                      </td>
-
                       {/* EVENT */}
                       <td className="px-5 py-5">
                         <p className="text-sm font-semibold text-gray-800">
-                          {ticket.event}
+                          {payment.event}
                         </p>
                       </td>
 
-                      {/* TYPE */}
+                      {/* AMOUNT */}
                       <td className="px-5 py-5">
-                        <span className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-700">
-                          {ticket.type}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          <IndianRupee
+                            size={14}
+                            className="text-gray-400"
+                          />
+
+                          <span className="text-sm font-black">
+                            {payment.amount.toLocaleString()}
+                          </span>
+                        </div>
                       </td>
 
-                      {/* PRICE */}
+                      {/* METHOD */}
                       <td className="px-5 py-5">
-                        <span className="text-sm font-bold">
-                          ₹{ticket.price.toLocaleString()}
+                        <span className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-700">
+                          {payment.method}
                         </span>
                       </td>
 
                       {/* DATE */}
                       <td className="px-5 py-5 text-sm text-gray-500">
-                        {ticket.issued}
+                        {payment.date}
                       </td>
 
                       {/* STATUS */}
                       <td className="px-5 py-5">
-                        <StatusBadge status={ticket.status} />
+                        <StatusBadge status={payment.status} />
                       </td>
 
                       {/* ACTION */}
@@ -398,9 +408,9 @@ export default function Tickets() {
                           type="button"
                           onClick={() =>
                             setOpenMenu(
-                              openMenu === ticket.id
+                              openMenu === payment.id
                                 ? null
-                                : ticket.id
+                                : payment.id
                             )
                           }
                           className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-100"
@@ -408,40 +418,27 @@ export default function Tickets() {
                           <MoreHorizontal size={18} />
                         </button>
 
-                        {openMenu === ticket.id && (
+                        {openMenu === payment.id && (
                           <div className="absolute right-5 top-14 z-20 w-48 overflow-hidden rounded-xl border border-gray-200 bg-white p-1.5 text-left shadow-xl">
 
                             <button
                               type="button"
                               onClick={() => setOpenMenu(null)}
-                              className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                              className="w-full rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                             >
-                              View Ticket
+                              View Payment
                             </button>
 
-                            {ticket.status === "Valid" && (
+                            {payment.status === "Successful" && (
                               <button
                                 type="button"
                                 onClick={() =>
-                                  checkInTicket(ticket.id)
+                                  refundPayment(payment.id)
                                 }
-                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-red-50"
                               >
-                                <ScanLine size={15} />
-                                Mark as Checked In
-                              </button>
-                            )}
-
-                            {ticket.status === "Valid" && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  cancelTicket(ticket.id)
-                                }
-                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
-                              >
-                                <Ban size={15} />
-                                Cancel Ticket
+                                <RotateCcw size={15} />
+                                Refund Payment
                               </button>
                             )}
 
@@ -458,19 +455,22 @@ export default function Tickets() {
             </div>
 
             {/* EMPTY */}
-            {filteredTickets.length === 0 && (
+            {filteredPayments.length === 0 && (
               <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
 
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
-                  <Ticket size={24} className="text-gray-400" />
+                  <CreditCard
+                    size={24}
+                    className="text-gray-400"
+                  />
                 </div>
 
                 <h3 className="mt-4 font-bold text-gray-900">
-                  No tickets found
+                  No payments found
                 </h3>
 
                 <p className="mt-1 text-sm text-gray-500">
-                  Try changing your search or status filter.
+                  Try changing your search or payment status.
                 </p>
 
               </div>
@@ -482,18 +482,17 @@ export default function Tickets() {
               <span>
                 Showing{" "}
                 <strong className="text-gray-900">
-                  {filteredTickets.length}
+                  {filteredPayments.length}
                 </strong>{" "}
                 of{" "}
                 <strong className="text-gray-900">
-                  {tickets.length}
+                  {payments.length}
                 </strong>{" "}
-                tickets
+                payments
               </span>
 
-              <span className="flex items-center gap-2 text-xs text-gray-400">
-                <Clock3 size={13} />
-                QR scanning will connect to backend
+              <span className="text-xs text-gray-400">
+                Payment gateway integration pending
               </span>
 
             </div>
@@ -543,28 +542,19 @@ function SummaryCard({
 function StatusBadge({
   status,
 }: {
-  status: TicketStatus;
+  status: PaymentStatus;
 }) {
-  const styles: Record<TicketStatus, string> = {
-    Valid: "bg-green-50 text-green-700",
-    Used: "bg-gray-100 text-gray-700",
-    Cancelled: "bg-red-50 text-red-700",
+  const styles: Record<PaymentStatus, string> = {
+    Successful: "bg-green-50 text-green-700",
+    Pending: "bg-yellow-50 text-yellow-700",
+    Failed: "bg-red-50 text-red-700",
+    Refunded: "bg-gray-100 text-gray-600",
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${styles[status]}`}
+      className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold ${styles[status]}`}
     >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${
-          status === "Valid"
-            ? "bg-green-600"
-            : status === "Used"
-              ? "bg-gray-500"
-              : "bg-red-500"
-        }`}
-      />
-
       {status}
     </span>
   );

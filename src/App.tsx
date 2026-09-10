@@ -13,7 +13,7 @@ import MyEvents from "./pages/organizer/MyEvents";
 import CreateEvent from "./pages/organizer/CreateEvent";
 import EventManagement from "./pages/organizer/EventManagement";
 import TicketsSales from "./pages/organizer/TicketsSales";
-
+import Customers from "./pages/admin/Customers";
 import Attendees from "./pages/organizer/Attendees";
 import Scanner from "./pages/scanner/Scanner";
 import Analytics from "./pages/organizer/Analytics";
@@ -22,6 +22,12 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminEvents from "./pages/admin/Events";
 import AdminLayout from "./pages/admin/AdminLayout";
+import Organizers from "./pages/admin/Organizers";
+import Orders from "./pages/admin/Orders";
+import Tickets from "./pages/admin/Tickets";
+import Payments from "./pages/admin/Payments";
+import AdminAnalytics from "./pages/admin/Analytics";
+import AdminSettings from "./pages/admin/Settings";
 
 // import EventsManagement from "./pages/admin/EventsManagement";
 function App() {
@@ -68,8 +74,30 @@ function App() {
   element={<AdminEvents />}
 />
 <Route path="/admin" element={<AdminLayout />}></Route>
-
+<Route
+  path="/admin/organizers"
+  element={<Organizers />}
+/>
+<Route path="/admin/customers" element={<Customers />} />
+<Route
+  path="/admin/orders"
+  element={<Orders />}
+/>
+<Route
+  path="/admin/tickets"
+  element={<Tickets />}
+/>
+<Route
+  path="/admin/payments"
+  element={<Payments />}
+/>
+<Route
+  path="/admin/analytics"
+  element={<AdminAnalytics />}
+/>
+<Route path="/admin/settings" element={<AdminSettings />} />
       </Routes>
+
     </BrowserRouter>
   );
 }
