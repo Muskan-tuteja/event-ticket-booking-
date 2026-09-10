@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useState } from "react";
 
 const event = {
@@ -29,7 +29,7 @@ const tickets = [
 ];
 
 export default function EventManagement() {
-  const { id } = useParams();
+  // const { id } = useParams();
   const [activeTab, setActiveTab] = useState("Overview");
 
   const totalSold = tickets.reduce((sum, t) => sum + t.sold, 0);

@@ -120,9 +120,9 @@ export default function Orders() {
     (order) => order.status === "Pending"
   ).length;
 
-  const failedOrders = orders.filter(
-    (order) => order.status === "Failed"
-  ).length;
+  // const failedOrders = orders.filter(
+  //   (order) => order.status === "Failed"
+  // ).length;
 
   const totalRevenue = orders
     .filter((order) => order.status === "Paid")
