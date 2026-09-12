@@ -15,6 +15,7 @@ import {
 import Navbar from "../../components/public/Navbar";
 import EventCard from "../../components/public/EventCard";
 import { events } from "../../data/events";
+import heroVideo from "../../assests/hero/night_event_video.mp4";
 
 export default function Events() {
   const [search, setSearch] = useState("");
@@ -78,63 +79,256 @@ export default function Events() {
       <Navbar />
 
       {/* =========================================================
-          HERO
-      ========================================================= */}
-      <section className="relative overflow-hidden bg-[#09090b] text-white">
-        {/* Ambient glows */}
-        <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-violet-600/20 blur-[120px]" />
+    HERO — PREMIUM ANIMATED BACKGROUND
+========================================================= */}
+<section className="relative overflow-hidden bg-[#07070a] text-white">
 
-        <div className="pointer-events-none absolute -bottom-40 left-[20%] h-[360px] w-[360px] rounded-full bg-blue-500/10 blur-[110px]" />
+  {/* =====================================================
+      ANIMATED BACKGROUND
+  ===================================================== */}
+ {/* =====================================================
+      BACKGROUND VIDEO
+  ===================================================== */}
+  <video
+    className="absolute inset-0 h-full w-full object-cover"
+    src={heroVideo}
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+  />
 
-        {/* Grid */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
+  {/* =====================================================
+      DARK OVERLAY
+  ===================================================== */}
+  <div className="absolute inset-0 bg-black/65" />
 
-        <div className="relative mx-auto max-w-7xl px-5 pb-24 pt-14 md:px-8 md:pb-28 md:pt-20">
-          <div className="max-w-4xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-bold text-gray-300 backdrop-blur-xl">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
+  {/* =====================================================
+      LEFT DARK GRADIENT
+  ===================================================== */}
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/20" />
 
-              {events.length}+ experiences to explore
-            </div>
+  {/* =====================================================
+      BOTTOM GRADIENT
+  ===================================================== */}
+  <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 to-transparent" />
+  {/* Purple animated glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -right-40 -top-40
+      h-[520px] w-[520px]
+      rounded-full
+      bg-violet-600/20
+      blur-[140px]
+      animate-[pulse_5s_ease-in-out_infinite]
+    "
+  />
 
-            {/* Heading */}
-            <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.055em] sm:text-6xl md:text-7xl lg:text-[80px]">
-              Find your next
-              <br />
-              <span className="text-gray-500">
-                unforgettable experience.
-              </span>
-            </h1>
+  {/* Blue animated glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -bottom-52 left-[15%]
+      h-[500px] w-[500px]
+      rounded-full
+      bg-blue-600/15
+      blur-[150px]
+      animate-[pulse_7s_ease-in-out_infinite]
+    "
+  />
 
-            <p className="mt-7 max-w-2xl text-base leading-7 text-gray-400 md:text-lg">
-              Discover concerts, comedy shows, conferences and unique
-              experiences happening around you.
-            </p>
+  {/* Pink glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      left-[45%] top-[15%]
+      h-[280px] w-[280px]
+      rounded-full
+      bg-fuchsia-500/10
+      blur-[120px]
+      animate-[pulse_6s_ease-in-out_infinite]
+    "
+  />
 
-            {/* Small trust row */}
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-semibold text-gray-500">
-              <span className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-gray-400" />
-                Upcoming events
-              </span>
+  {/* =====================================================
+      MOVING LIGHT ORB
+  ===================================================== */}
 
-              <span className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-gray-400" />
-                Multiple locations
-              </span>
+  <div
+    className="
+      pointer-events-none absolute
+      left-[-120px] top-[30%]
+      h-40 w-40
+      rounded-full
+      bg-violet-500/20
+      blur-[80px]
+      animate-[heroOrb_10s_linear_infinite]
+    "
+  />
 
-              <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-gray-400" />
-                Curated experiences
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+  {/* =====================================================
+      GRID
+  ===================================================== */}
+
+  <div
+    className="
+      pointer-events-none absolute inset-0
+      opacity-[0.045]
+      [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)]
+      [background-size:64px_64px]
+    "
+  />
+
+  {/* =====================================================
+      DIAGONAL LIGHT
+  ===================================================== */}
+
+  <div
+    className="
+      pointer-events-none absolute
+      -left-[30%] top-[-80%]
+      h-[220%] w-[25%]
+      rotate-[25deg]
+      bg-gradient-to-r
+      from-transparent
+      via-white/[0.035]
+      to-transparent
+      animate-[lightSweep_9s_ease-in-out_infinite]
+    "
+  />
+
+  {/* =====================================================
+      FLOATING PARTICLES
+  ===================================================== */}
+
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+    <span className="absolute left-[12%] top-[22%] h-1 w-1 rounded-full bg-violet-300/60 animate-ping" />
+
+    <span
+      className="absolute left-[30%] top-[65%] h-1.5 w-1.5 rounded-full bg-blue-300/50 animate-pulse"
+      style={{ animationDelay: "800ms" }}
+    />
+
+    <span
+      className="absolute left-[58%] top-[25%] h-1 w-1 rounded-full bg-white/40 animate-ping"
+      style={{ animationDelay: "1200ms" }}
+    />
+
+    <span
+      className="absolute right-[18%] top-[45%] h-1.5 w-1.5 rounded-full bg-violet-300/50 animate-pulse"
+      style={{ animationDelay: "1600ms" }}
+    />
+
+    <span
+      className="absolute right-[30%] bottom-[20%] h-1 w-1 rounded-full bg-blue-300/50 animate-ping"
+      style={{ animationDelay: "2000ms" }}
+    />
+
+  </div>
+
+
+  {/* =====================================================
+      CONTENT
+  ===================================================== */}
+
+  <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-14 md:px-8 md:pb-28 md:pt-20">
+
+    <div className="max-w-4xl">
+
+      {/* Badge */}
+      <div
+        className="
+          inline-flex items-center gap-2
+          rounded-full
+          border border-white/10
+          bg-white/[0.06]
+          px-4 py-2
+          text-xs font-bold
+          text-gray-300
+          backdrop-blur-xl
+          transition-all duration-500
+          hover:border-violet-400/30
+          hover:bg-violet-500/10
+          hover:text-white
+        "
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+        </span>
+
+        {events.length}+ experiences to explore
+      </div>
+
+
+      {/* Heading */}
+      <h1
+        className="
+          mt-7
+          max-w-4xl
+          text-5xl
+          font-black
+          leading-[0.98]
+          tracking-[-0.055em]
+          sm:text-6xl
+          md:text-7xl
+          lg:text-[80px]
+        "
+      >
+        Find your next
+        <br />
+
+        <span
+          className="
+            bg-gradient-to-r
+            from-gray-500
+            via-gray-300
+            to-violet-400
+            bg-clip-text
+            text-transparent
+            bg-[length:200%_100%]
+            animate-[gradientMove_5s_ease_infinite]
+          "
+        >
+          unforgettable experience.
+        </span>
+      </h1>
+
+
+      {/* Description */}
+      <p className="mt-7 max-w-2xl text-base leading-7 text-gray-400 md:text-lg">
+        Discover concerts, comedy shows, conferences and unique
+        experiences happening around you.
+      </p>
+
+
+      {/* Trust row */}
+      <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-semibold text-gray-500">
+
+        <span className="flex items-center gap-2 transition hover:text-white">
+          <CalendarDays className="h-4 w-4 text-violet-400" />
+          Upcoming events
+        </span>
+
+        <span className="flex items-center gap-2 transition hover:text-white">
+          <MapPin className="h-4 w-4 text-violet-400" />
+          Multiple locations
+        </span>
+
+        <span className="flex items-center gap-2 transition hover:text-white">
+          <Sparkles className="h-4 w-4 text-violet-400" />
+          Curated experiences
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
       {/* =========================================================
           SEARCH / FILTER PANEL
@@ -440,45 +634,250 @@ export default function Events() {
         )}
       </main>
 
-      {/* =========================================================
-          ORGANIZER CTA
-      ========================================================= */}
-      <section className="mx-auto max-w-7xl px-5 pb-16 md:px-8">
-        <div className="relative overflow-hidden rounded-[32px] bg-[#09090b] px-7 py-12 text-white md:px-14 md:py-14">
-          {/* Glows */}
-          <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-600/20 blur-[100px]" />
+     {/* =========================================================
+    ORGANIZER CTA — PREMIUM ANIMATED
+========================================================= */}
 
-          <div className="pointer-events-none absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-blue-500/10 blur-[90px]" />
+<section className="mx-auto max-w-7xl px-5 pb-16 md:px-8">
 
-          {/* Content */}
-          <div className="relative flex flex-col justify-between gap-9 md:flex-row md:items-center">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                <Sparkles className="h-3.5 w-3.5 text-violet-400" />
-                For organizers
-              </div>
+  <div className="group relative overflow-hidden rounded-[32px] bg-[#09090b] px-7 py-12 text-white shadow-[0_25px_80px_rgba(0,0,0,0.25)] transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_35px_100px_rgba(0,0,0,0.4)] md:px-14 md:py-14">
 
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.03em] md:text-4xl">
-                Have an event to share?
-              </h2>
+    {/* =====================================================
+        ANIMATED BORDER
+    ===================================================== */}
 
-              <p className="mt-4 max-w-xl text-sm leading-7 text-gray-400 md:text-base">
-                Create your event, sell tickets and manage your attendees with
-                PRAPT.
-              </p>
-            </div>
+    <div className="pointer-events-none absolute inset-0 rounded-[32px] border border-white/10 transition-colors duration-500 group-hover:border-violet-400/30" />
 
-            <Link
-              to="/organizer"
-              className="group flex w-fit shrink-0 items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-black text-black transition-all hover:-translate-y-0.5 hover:bg-gray-200"
-            >
-              Create an Event
+    {/* =====================================================
+        MOVING SHINE
+    ===================================================== */}
 
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
+    <div
+      className="
+        pointer-events-none absolute -left-[120%] top-0
+        h-full w-[60%]
+        rotate-12
+        bg-gradient-to-r
+        from-transparent
+        via-white/[0.07]
+        to-transparent
+        transition-all duration-[1400ms]
+        group-hover:left-[130%]
+      "
+    />
+
+    {/* =====================================================
+        PURPLE GLOW
+    ===================================================== */}
+
+    <div
+      className="
+        pointer-events-none absolute
+        -right-24 -top-24
+        h-72 w-72
+        rounded-full
+        bg-violet-600/20
+        blur-[100px]
+        transition-all duration-700
+        group-hover:scale-125
+        group-hover:bg-violet-500/30
+      "
+    />
+
+    {/* =====================================================
+        BLUE GLOW
+    ===================================================== */}
+
+    <div
+      className="
+        pointer-events-none absolute
+        -bottom-32 left-1/3
+        h-64 w-64
+        rounded-full
+        bg-blue-500/10
+        blur-[90px]
+        transition-all duration-700
+        group-hover:scale-125
+      "
+    />
+
+    {/* =====================================================
+        MOVING DOTS
+    ===================================================== */}
+
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+
+      <span className="absolute left-[12%] top-[25%] h-1 w-1 animate-pulse rounded-full bg-violet-300/70" />
+
+      <span
+        className="absolute left-[42%] top-[70%] h-1.5 w-1.5 animate-pulse rounded-full bg-blue-300/60"
+        style={{ animationDelay: "700ms" }}
+      />
+
+      <span
+        className="absolute right-[20%] top-[30%] h-1 w-1 animate-pulse rounded-full bg-white/50"
+        style={{ animationDelay: "1200ms" }}
+      />
+
+      <span
+        className="absolute right-[35%] bottom-[20%] h-1 w-1 animate-pulse rounded-full bg-violet-300/60"
+        style={{ animationDelay: "1800ms" }}
+      />
+
+    </div>
+
+
+    {/* =====================================================
+        CONTENT
+    ===================================================== */}
+
+    <div className="relative z-10 flex flex-col justify-between gap-9 md:flex-row md:items-center">
+
+      {/* LEFT */}
+
+      <div className="max-w-2xl">
+
+        {/* Badge */}
+
+        <div
+          className="
+            inline-flex items-center gap-2
+            rounded-full
+            border border-white/10
+            bg-white/[0.05]
+            px-3 py-1.5
+            text-[11px]
+            font-bold
+            uppercase
+            tracking-wider
+            text-gray-400
+            backdrop-blur-md
+            transition-all duration-500
+            group-hover:border-violet-400/30
+            group-hover:bg-violet-500/10
+            group-hover:text-violet-200
+          "
+        >
+
+          <Sparkles
+            className="
+              h-3.5 w-3.5
+              text-violet-400
+              transition-transform
+              duration-500
+              group-hover:rotate-12
+              group-hover:scale-125
+            "
+          />
+
+          For organizers
+
         </div>
-      </section>
+
+
+        {/* Heading */}
+
+        <h2
+          className="
+            mt-4
+            text-3xl
+            font-black
+            tracking-[-0.03em]
+            md:text-4xl
+          "
+        >
+
+          Have an event to share?
+
+          <span className="ml-2 inline-block text-violet-400 transition-transform duration-500 group-hover:translate-x-1">
+            ✦
+          </span>
+
+        </h2>
+
+
+        {/* Description */}
+
+        <p className="mt-4 max-w-xl text-sm leading-7 text-gray-400 md:text-base">
+          Create your event, sell tickets and manage your attendees with
+          PRAPT.
+        </p>
+
+      </div>
+
+
+      {/* =====================================================
+          CTA BUTTON
+      ===================================================== */}
+
+      <Link
+        to="/organizer"
+        className="
+          group/button
+          relative
+          flex
+          w-fit
+          shrink-0
+          items-center
+          gap-2
+          overflow-hidden
+          rounded-xl
+          bg-white
+          px-6
+          py-3.5
+          text-sm
+          font-black
+          text-black
+          shadow-[0_10px_30px_rgba(255,255,255,0.08)]
+          transition-all
+          duration-300
+          hover:-translate-y-1
+          hover:scale-[1.03]
+          hover:bg-gray-100
+          hover:shadow-[0_15px_40px_rgba(255,255,255,0.15)]
+          active:scale-95
+        "
+      >
+
+        {/* Button shine */}
+
+        <span
+          className="
+            absolute
+            -left-20
+            top-0
+            h-full
+            w-10
+            rotate-12
+            bg-black/10
+            blur-sm
+            transition-all
+            duration-700
+            group-hover/button:left-[120%]
+          "
+        />
+
+        <span className="relative z-10">
+          Create an Event
+        </span>
+
+        <ArrowRight
+          className="
+            relative z-10
+            h-4 w-4
+            transition-all
+            duration-300
+            group-hover/button:translate-x-1
+          "
+        />
+
+      </Link>
+
+    </div>
+
+  </div>
+
+</section>
     </div>
   );
 }

@@ -152,191 +152,205 @@ export default function Home() {
     <div className="min-h-screen bg-white text-gray-950">
       <Navbar />
 
-      {/* =========================================================
-    HERO
+{/* =========================================================
+    HERO — FULL BACKGROUND IMAGE SLIDER
 ========================================================= */}
 
-<section className="relative overflow-hidden bg-[#09090b] text-white">
+<section className="relative min-h-[680px] overflow-hidden bg-black text-white">
 
-  {/* Background glow */}
-  <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
+  {/* ================= BACKGROUND SLIDES ================= */}
 
-  <div className="absolute -bottom-40 left-1/4 h-[400px] w-[400px] rounded-full bg-blue-500/10 blur-[100px]" />
+  {heroSlides.map((slide, index) => (
+    <div
+      key={slide.src}
+      className={`absolute inset-0 transition-opacity duration-1000 ${
+        activeSlide === index
+          ? "opacity-100"
+          : "pointer-events-none opacity-0"
+      }`}
+    >
+      {slide.type === "image" ? (
+        <img
+          src={slide.src}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <video
+          src={slide.src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover"
+        />
+      )}
+    </div>
+  ))}
 
-  {/* Grid pattern */}
-  <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
+  {/* ================= DARK OVERLAY ================= */}
 
-  <div className="relative mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-20 lg:py-24">
+  <div className="absolute inset-0 bg-black/65" />
 
-    {/* HERO CONTENT */}
-    <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
+  {/* Bottom gradient */}
+  <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
-      {/* LEFT */}
-      <div>
+  {/* ================= GRID ================= */}
 
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-xs font-semibold text-gray-300 backdrop-blur-xl">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-          Discover experiences worth remembering
-        </div>
+  <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
 
-        {/* Heading */}
-        <h1 className="mt-7 text-5xl font-black leading-[0.98] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[76px]">
-          Discover events.
-          <br />
+  {/* ================= HERO CONTENT ================= */}
 
-          <span className="bg-gradient-to-r from-gray-400 via-gray-300 to-gray-500 bg-clip-text text-transparent">
-            Create memories.
-          </span>
-        </h1>
+  <div className="relative z-10 mx-auto max-w-7xl px-5 py-24 md:px-8 md:py-28 lg:py-32">
 
-        {/* Description */}
-        <p className="mt-7 max-w-xl text-base leading-7 text-gray-400 md:text-lg">
-          Find concerts, conferences, workshops, comedy shows and
-          unforgettable experiences happening around you.
-        </p>
+    {/* Badge */}
 
-        {/* CTA */}
-        <div className="mt-9 flex flex-wrap gap-3">
-
-          <Link
-            to="/events"
-            className="group rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-black transition duration-300 hover:-translate-y-0.5 hover:bg-gray-200"
-          >
-            Explore Events
-
-            <span className="ml-2 inline-block transition group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-
-          <Link
-            to="/organizer"
-            className="rounded-xl border border-white/15 bg-white/[0.05] px-6 py-3.5 text-sm font-bold text-white backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:bg-white/10"
-          >
-            Become an Organizer
-          </Link>
-
-        </div>
-
-      </div>
+    <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/30 px-4 py-2 text-xs font-semibold text-gray-200 backdrop-blur-md">
+      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+      Discover experiences worth remembering
+    </div>
 
 
-      {/* RIGHT — IMAGE / VIDEO CAROUSEL */}
-      <div className="relative">
+    {/* Heading */}
 
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[32px] border border-white/10 bg-white/5 shadow-[0_30px_100px_rgba(0,0,0,0.55)] sm:aspect-square lg:aspect-[4/5]">
+    <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[78px]">
 
-          {/* IMAGE */}
-          {currentSlide.type === "image" && (
-            <img
-              key={currentSlide.src}
-              src={currentSlide.src}
-              alt="PRAPT event experience"
-              className="h-full w-full object-cover transition-all duration-700"
-            />
-          )}
+      Discover events.
+      <br />
 
-          {/* VIDEO */}
-          {currentSlide.type === "video" && (
-            <video
-              key={currentSlide.src}
-              src={currentSlide.src}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="h-full w-full object-cover"
-            />
-          )}
+      <span className="text-white/70">
+        Create memories.
+      </span>
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-
-          {/* Slide information */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-
-            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300">
-              PRAPT Experiences
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black md:text-3xl">
-              {currentSlide.title}
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-300">
-              {currentSlide.text}
-            </p>
-
-          </div>
+    </h1>
 
 
-          {/* Previous button */}
-          <button
-            type="button"
-            onClick={() =>
-              setActiveSlide(
-                (prev) =>
-                  (prev - 1 + heroSlides.length) %
-                  heroSlides.length
-              )
-            }
-            className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-lg text-white backdrop-blur-md transition hover:bg-white hover:text-black"
-            aria-label="Previous slide"
-          >
-            ←
-          </button>
+    {/* Description */}
+
+    <p className="mt-7 max-w-xl text-base leading-7 text-gray-200 md:text-lg">
+      Find concerts, conferences, workshops, comedy shows and
+      unforgettable experiences happening around you.
+    </p>
 
 
-          {/* Next button */}
-          <button
-            type="button"
-            onClick={() =>
-              setActiveSlide(
-                (prev) =>
-                  (prev + 1) % heroSlides.length
-              )
-            }
-            className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-lg text-white backdrop-blur-md transition hover:bg-white hover:text-black"
-            aria-label="Next slide"
-          >
-            →
-          </button>
+    {/* CTA */}
 
-        </div>
+    <div className="mt-9 flex flex-wrap gap-3">
+
+      <Link
+        to="/events"
+        className="group rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-black shadow-lg transition duration-300 hover:-translate-y-1 hover:bg-gray-200"
+      >
+        Explore Events
+
+        <span className="ml-2 inline-block transition group-hover:translate-x-1">
+          →
+        </span>
+      </Link>
 
 
-        {/* Carousel dots */}
-        <div className="mt-5 flex justify-center gap-2">
-
-          {heroSlides.map((slide, index) => (
-            <button
-              key={slide.src}
-              type="button"
-              onClick={() => setActiveSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                activeSlide === index
-                  ? "w-8 bg-white"
-                  : "w-2 bg-white/30 hover:bg-white/60"
-              }`}
-            />
-          ))}
-
-        </div>
-
-      </div>
+      <Link
+        to="/organizer"
+        className="rounded-xl border border-white/25 bg-black/30 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/10"
+      >
+        Become an Organizer
+      </Link>
 
     </div>
 
 
-    {/* SEARCH BOX */}
-    <div className="mt-14 rounded-[28px] border border-white/10 bg-white p-2 shadow-[0_25px_80px_rgba(0,0,0,0.4)] md:mt-16">
+    {/* ================= SLIDE INFO ================= */}
+
+    <div className="mt-14">
+
+      <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-violet-300">
+        PRAPT Experiences
+      </p>
+
+      <h2 className="mt-2 text-2xl font-black md:text-3xl">
+        {currentSlide.title}
+      </h2>
+
+      <p className="mt-2 text-sm text-gray-300">
+        {currentSlide.text}
+      </p>
+
+    </div>
+
+
+    {/* ================= SLIDER CONTROLS ================= */}
+
+    <div className="mt-6 flex items-center gap-3">
+
+      {/* Previous */}
+
+      <button
+        type="button"
+        onClick={() =>
+          setActiveSlide(
+            (prev) =>
+              (prev - 1 + heroSlides.length) %
+              heroSlides.length
+          )
+        }
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-md transition hover:bg-white hover:text-black"
+        aria-label="Previous slide"
+      >
+        ←
+      </button>
+
+
+      {/* Dots */}
+
+      <div className="flex items-center gap-2">
+
+        {heroSlides.map((slide, index) => (
+          <button
+            key={slide.src}
+            type="button"
+            onClick={() => setActiveSlide(index)}
+            aria-label={`Go to slide ${index + 1}`}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              activeSlide === index
+                ? "w-8 bg-white"
+                : "w-2 bg-white/40 hover:bg-white/70"
+            }`}
+          />
+        ))}
+
+      </div>
+
+
+      {/* Next */}
+
+      <button
+        type="button"
+        onClick={() =>
+          setActiveSlide(
+            (prev) =>
+              (prev + 1) % heroSlides.length
+          )
+        }
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-md transition hover:bg-white hover:text-black"
+        aria-label="Next slide"
+      >
+        →
+      </button>
+
+    </div>
+
+
+    {/* =====================================================
+        SEARCH BOX — SAME STYLE
+    ===================================================== */}
+
+    <div className="mt-14 rounded-[28px] border border-white/20 bg-white p-2 shadow-[0_25px_80px_rgba(0,0,0,0.5)] md:mt-16">
 
       <div className="grid gap-2 md:grid-cols-[1.6fr_1fr_1fr_1fr_auto]">
 
         {/* Search */}
-        <div className="group flex items-center gap-3 rounded-2xl bg-gray-100 px-5 py-4 transition focus-within:bg-gray-50">
+
+        <div className="group flex items-center gap-3 rounded-2xl bg-gray-100 px-5 py-4 transition focus-within:bg-white">
 
           <span className="text-xl text-gray-400">
             ⌕
@@ -352,65 +366,69 @@ export default function Home() {
 
 
         {/* Category */}
+
         <div className="relative">
 
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
             ✦
           </span>
 
-          <select className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50">
-
+          <select
+            className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50"
+          >
             <option>All Categories</option>
             <option>Music</option>
             <option>Technology</option>
             <option>Comedy</option>
             <option>Arts & Culture</option>
-
           </select>
 
         </div>
 
 
         {/* Location */}
+
         <div className="relative">
 
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
             ⌖
           </span>
 
-          <select className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50">
-
+          <select
+            className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50"
+          >
             <option>All Locations</option>
             <option>Delhi</option>
             <option>Gurugram</option>
             <option>Noida</option>
             <option>Mumbai</option>
-
           </select>
 
         </div>
 
 
         {/* Date */}
+
         <div className="relative">
 
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
             ◷
           </span>
 
-          <select className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50">
-
+          <select
+            className="h-full w-full appearance-none rounded-2xl bg-gray-100 px-10 py-4 text-sm font-medium text-gray-700 outline-none transition hover:bg-gray-50"
+          >
             <option>Any Date</option>
             <option>This Weekend</option>
             <option>This Week</option>
             <option>This Month</option>
-
           </select>
 
         </div>
 
 
-        {/* Search button */}
+        {/* Search Button */}
+
         <Link
           to="/events"
           className="flex items-center justify-center rounded-2xl bg-black px-8 py-4 text-sm font-bold text-white transition duration-300 hover:bg-gray-800"
