@@ -37,6 +37,8 @@ import Tickets from "./pages/admin/Tickets";
 import Payments from "./pages/admin/Payments";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminSettings from "./pages/admin/Settings";
+
+// ================= AUTH =================
 import CustomerAuthGuard from "./components/auth/CustomerAuthGuard";
 
 function App() {
@@ -45,32 +47,8 @@ function App() {
       <Routes>
 
         {/* =====================================================
-            PUBLIC WEBSITE
+            CUSTOMER AUTHENTICATION
         ===================================================== */}
-
-        <Route path="/" element={<Home />} />
-
-        <Route path="/events" element={<Events />} />
-
-        <Route
-          path="/events/:id"
-          element={<EventDetails />}
-        />
-
-        <Route
-          path="/checkout/:id"
-          element={<Checkout />}
-        />
-
-        <Route
-          path="/payment-success"
-          element={<PaymentSuccess />}
-        />
-
-        <Route
-          path="/tickets"
-          element={<MyTickets />}
-        />
 
         <Route
           path="/login"
@@ -83,71 +61,139 @@ function App() {
         />
 
 
-        {/* ORGANIZER */}
+        {/* =====================================================
+            CUSTOMER / PUBLIC WEBSITE
+            LOGIN REQUIRED
+        ===================================================== */}
 
-<Route
-  path="/organizer"
-  element={<OrganizerLogin />}
-/>
+        <Route
+          path="/"
+          element={
+            <CustomerAuthGuard>
+              <Home />
+            </CustomerAuthGuard>
+          }
+        />
 
-<Route
-  path="/organizer/login"
-  element={<OrganizerLogin />}
-/>
+        <Route
+          path="/events"
+          element={
+            <CustomerAuthGuard>
+              <Events />
+            </CustomerAuthGuard>
+          }
+        />
 
-<Route
-  path="/organizer/register"
-  element={<OrganizerRegister />}
-/>
+        <Route
+          path="/events/:id"
+          element={
+            <CustomerAuthGuard>
+              <EventDetails />
+            </CustomerAuthGuard>
+          }
+        />
 
-<Route
-  path="/organizer/dashboard"
-  element={<OrganizerDashboard />}
-/>
+        <Route
+          path="/checkout/:id"
+          element={
+            <CustomerAuthGuard>
+              <Checkout />
+            </CustomerAuthGuard>
+          }
+        />
 
-<Route
-  path="/organizer/events"
-  element={<MyEvents />}
-/>
+        <Route
+          path="/payment-success"
+          element={
+            <CustomerAuthGuard>
+              <PaymentSuccess />
+            </CustomerAuthGuard>
+          }
+        />
 
-<Route
-  path="/organizer/create-event"
-  element={<CreateEvent />}
-/>
-
-<Route
-  path="/organizer/events/:id"
-  element={<EventManagement />}
-/>
-
-<Route
-  path="/organizer/tickets"
-  element={<TicketsSales />}
-/>
-
-<Route
-  path="/organizer/attendees"
-  element={<Attendees />}
-/>
-
-<Route
-  path="/organizer/analytics"
-  element={<Analytics />}
-/>
-
-<Route
-  path="/organizer/settings"
-  element={<Settings />}
-/>
-
-<Route
-  path="/scanner"
-  element={<Scanner />}
-/>
+        <Route
+          path="/tickets"
+          element={
+            <CustomerAuthGuard>
+              <MyTickets />
+            </CustomerAuthGuard>
+          }
+        />
 
 
         {/* =====================================================
-            ADMIN AUTHENTICATION
+            ORGANIZER
+            SEPARATE AUTHENTICATION
+        ===================================================== */}
+
+        <Route
+          path="/organizer"
+          element={<OrganizerLogin />}
+        />
+
+        <Route
+          path="/organizer/login"
+          element={<OrganizerLogin />}
+        />
+
+        <Route
+          path="/organizer/register"
+          element={<OrganizerRegister />}
+        />
+
+        <Route
+          path="/organizer/dashboard"
+          element={<OrganizerDashboard />}
+        />
+
+        <Route
+          path="/organizer/events"
+          element={<MyEvents />}
+        />
+
+        <Route
+          path="/organizer/create-event"
+          element={<CreateEvent />}
+        />
+
+        <Route
+          path="/organizer/events/:id"
+          element={<EventManagement />}
+        />
+
+        <Route
+          path="/organizer/tickets"
+          element={<TicketsSales />}
+        />
+
+        <Route
+          path="/organizer/attendees"
+          element={<Attendees />}
+        />
+
+        <Route
+          path="/organizer/analytics"
+          element={<Analytics />}
+        />
+
+        <Route
+          path="/organizer/settings"
+          element={<Settings />}
+        />
+
+
+        {/* =====================================================
+            SCANNER
+        ===================================================== */}
+
+        <Route
+          path="/scanner"
+          element={<Scanner />}
+        />
+
+
+        {/* =====================================================
+            ADMIN LOGIN
         ===================================================== */}
 
         <Route
@@ -211,63 +257,6 @@ function App() {
           />
 
         </Route>
-        <Route
-  path="/"
-  element={
-    <CustomerAuthGuard>
-      <Home />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route
-  path="/events"
-  element={
-    <CustomerAuthGuard>
-      <Events />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route
-  path="/events/:id"
-  element={
-    <CustomerAuthGuard>
-      <EventDetails />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route
-  path="/checkout/:id"
-  element={
-    <CustomerAuthGuard>
-      <Checkout />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route
-  path="/payment-success"
-  element={
-    <CustomerAuthGuard>
-      <PaymentSuccess />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route
-  path="/tickets"
-  element={
-    <CustomerAuthGuard>
-      <MyTickets />
-    </CustomerAuthGuard>
-  }
-/>
-
-<Route path="/login" element={<Login />} />
-
-<Route path="/register" element={<Register />} />
 
       </Routes>
     </BrowserRouter>

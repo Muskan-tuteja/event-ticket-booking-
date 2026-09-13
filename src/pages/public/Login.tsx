@@ -5,17 +5,20 @@ import { Link, useNavigate } from "react-router-dom";
 type LoginResponse = {
   success?: boolean;
   message?: string;
+
   user?: {
     id: string;
     email: string;
     role: string;
   };
+
   profile?: {
     id: string;
     full_name: string;
     email: string;
     role: string;
   };
+
   session?: {
     access_token?: string;
     refresh_token?: string;
@@ -35,19 +38,35 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // =====================================================
+  // EMAIL CHANGE
+  // =====================================================
+
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setErrorMessage("");
   };
+
+  // =====================================================
+  // PASSWORD CHANGE
+  // =====================================================
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     setErrorMessage("");
   };
 
+  // =====================================================
+  // REMEMBER ME
+  // =====================================================
+
   const handleRememberChange = (e: ChangeEvent<HTMLInputElement>) => {
     setRememberMe(e.target.checked);
   };
+
+  // =====================================================
+  // LOGIN
+  // =====================================================
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +74,7 @@ export default function Login() {
     setErrorMessage("");
     setSuccessMessage("");
 
+    // Validation
     if (!email.trim()) {
       setErrorMessage("Please enter your email address.");
       return;
@@ -68,14 +88,18 @@ export default function Login() {
     try {
       setLoading(true);
 
+      // API URL
       const API_URL =
         import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+      // API request
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           email: email.trim(),
           password,
@@ -84,55 +108,114 @@ export default function Login() {
 
       const data: LoginResponse = await response.json();
 
+      // Login failed
       if (!response.ok || !data.success) {
         throw new Error(data.message || "Login failed.");
       }
 
-      // Store login information
-      if (data.session?.access_token) {
-        const storage = rememberMe ? localStorage : sessionStorage;
+      // =====================================================
+      // IMPORTANT
+      // Choose storage BEFORE using it anywhere.
+      // =====================================================
 
+      const storage = rememberMe
+        ? localStorage
+        : sessionStorage;
+
+      // =====================================================
+      // CLEAR OLD AUTH DATA
+      // =====================================================
+
+      localStorage.removeItem("prapt_access_token");
+      localStorage.removeItem("prapt_refresh_token");
+      localStorage.removeItem("prapt_user");
+      localStorage.removeItem("prapt_profile");
+      localStorage.removeItem("prapt_customer");
+
+      sessionStorage.removeItem("prapt_access_token");
+      sessionStorage.removeItem("prapt_refresh_token");
+      sessionStorage.removeItem("prapt_user");
+      sessionStorage.removeItem("prapt_profile");
+      sessionStorage.removeItem("prapt_customer");
+
+      // =====================================================
+      // ACCESS TOKEN
+      // =====================================================
+
+      if (data.session?.access_token) {
         storage.setItem(
           "prapt_access_token",
           data.session.access_token
         );
-
-        if (data.session.refresh_token) {
-          storage.setItem(
-            "prapt_refresh_token",
-            data.session.refresh_token
-          );
-        }
       }
 
-      if (data.user) {
-        const storage = rememberMe ? localStorage : sessionStorage;
+      // =====================================================
+      // REFRESH TOKEN
+      // =====================================================
 
+      if (data.session?.refresh_token) {
+        storage.setItem(
+          "prapt_refresh_token",
+          data.session.refresh_token
+        );
+      }
+
+      // =====================================================
+      // USER
+      // =====================================================
+
+      if (data.user) {
         storage.setItem(
           "prapt_user",
           JSON.stringify(data.user)
         );
       }
 
-      if (data.profile) {
-        const storage = rememberMe ? localStorage : sessionStorage;
+      // =====================================================
+      // PROFILE
+      // =====================================================
 
+      if (data.profile) {
         storage.setItem(
           "prapt_profile",
           JSON.stringify(data.profile)
         );
       }
 
+      // =====================================================
+      // CUSTOMER AUTH
+      // CustomerAuthGuard isi key ko check karega.
+      // =====================================================
+
+      const customerData = data.profile || data.user;
+
+      if (customerData) {
+        storage.setItem(
+          "prapt_customer",
+          JSON.stringify(customerData)
+        );
+      }
+
+      // =====================================================
+      // SUCCESS
+      // =====================================================
+
       setSuccessMessage("Login successful!");
 
+      // Home page
       setTimeout(() => {
-        navigate("/");
+        navigate("/", { replace: true });
       }, 700);
+
     } catch (error: unknown) {
+      console.error("LOGIN ERROR:", error);
+
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("Something went wrong. Please try again.");
+        setErrorMessage(
+          "Something went wrong. Please try again."
+        );
       }
     } finally {
       setLoading(false);
@@ -141,6 +224,7 @@ export default function Login() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f8]">
+
       <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* =====================================================
@@ -149,39 +233,64 @@ export default function Login() {
 
         <div className="relative hidden overflow-hidden bg-[#09090b] lg:flex">
 
+          {/* Purple Glow */}
+
           <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
+
+          {/* Blue Glow */}
 
           <div className="absolute -bottom-40 -left-20 h-[400px] w-[400px] rounded-full bg-blue-500/10 blur-[100px]" />
 
+          {/* Grid */}
+
           <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
 
+          {/* Content */}
+
           <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
+
+            {/* Logo */}
 
             <Link
               to="/"
               className="text-2xl font-black tracking-tight text-white"
             >
-              PRAPT<span className="text-violet-500">.</span>
+              PRAPT
+              <span className="text-violet-500">.</span>
             </Link>
 
+            {/* Main Content */}
+
             <div className="max-w-lg">
+
+              {/* Icon */}
 
               <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl text-black">
                 ✦
               </div>
 
+              {/* Heading */}
+
               <h1 className="text-5xl font-black leading-[1.05] tracking-tight text-white xl:text-6xl">
+
                 Your next
+
                 <br />
+
                 <span className="text-gray-500">
                   experience awaits.
                 </span>
+
               </h1>
+
+              {/* Description */}
 
               <p className="mt-6 max-w-md text-base leading-7 text-gray-400">
                 Discover concerts, workshops, comedy shows and
                 unforgettable experiences around you.
               </p>
+
+              {/* Stats */}
 
               <div className="mt-9 flex gap-8">
 
@@ -189,6 +298,7 @@ export default function Login() {
                   <p className="text-2xl font-black text-white">
                     500+
                   </p>
+
                   <p className="mt-1 text-xs text-gray-500">
                     Events
                   </p>
@@ -198,6 +308,7 @@ export default function Login() {
                   <p className="text-2xl font-black text-white">
                     50K+
                   </p>
+
                   <p className="mt-1 text-xs text-gray-500">
                     Attendees
                   </p>
@@ -207,19 +318,24 @@ export default function Login() {
                   <p className="text-2xl font-black text-white">
                     20+
                   </p>
+
                   <p className="mt-1 text-xs text-gray-500">
                     Cities
                   </p>
                 </div>
 
               </div>
+
             </div>
+
+            {/* Footer */}
 
             <p className="text-xs text-gray-600">
               Discover. Book. Experience.
             </p>
 
           </div>
+
         </div>
 
         {/* =====================================================
@@ -230,20 +346,24 @@ export default function Login() {
 
           <div className="w-full max-w-md">
 
-            {/* Mobile logo */}
+            {/* Mobile Logo */}
 
             <div className="mb-10 text-center lg:hidden">
+
               <Link
                 to="/"
                 className="text-3xl font-black tracking-tight"
               >
-                PRAPT<span className="text-violet-600">.</span>
+                PRAPT
+                <span className="text-violet-600">.</span>
               </Link>
+
             </div>
 
             {/* Heading */}
 
             <div>
+
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-600">
                 Welcome back
               </p>
@@ -255,23 +375,40 @@ export default function Login() {
               <p className="mt-3 text-sm leading-6 text-gray-500">
                 Continue discovering and booking amazing events.
               </p>
+
             </div>
 
-            {/* Messages */}
+            {/* =====================================================
+                ERROR
+            ===================================================== */}
 
             {errorMessage && (
+
               <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+
                 {errorMessage}
+
               </div>
+
             )}
+
+            {/* =====================================================
+                SUCCESS
+            ===================================================== */}
 
             {successMessage && (
+
               <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-600">
+
                 {successMessage}
+
               </div>
+
             )}
 
-            {/* Form */}
+            {/* =====================================================
+                FORM
+            ===================================================== */}
 
             <form
               onSubmit={handleSubmit}
@@ -281,6 +418,7 @@ export default function Login() {
               {/* Email */}
 
               <div>
+
                 <label
                   htmlFor="email"
                   className="mb-2 block text-sm font-bold text-gray-800"
@@ -302,10 +440,12 @@ export default function Login() {
                     onChange={handleEmailChange}
                     placeholder="you@example.com"
                     autoComplete="email"
-                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-4 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
+                    disabled={loading}
+                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-4 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                   />
 
                 </div>
+
               </div>
 
               {/* Password */}
@@ -339,25 +479,36 @@ export default function Login() {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
                     value={password}
                     onChange={handlePasswordChange}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-16 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
+                    disabled={loading}
+                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-16 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                   />
 
                   <button
                     type="button"
                     onClick={() =>
-                      setShowPassword((previous) => !previous)
+                      setShowPassword(
+                        (previous) => !previous
+                      )
                     }
+                    disabled={loading}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 transition hover:text-black"
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword
+                      ? "Hide"
+                      : "Show"}
                   </button>
 
                 </div>
+
               </div>
 
               {/* Remember */}
@@ -370,6 +521,7 @@ export default function Login() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={handleRememberChange}
+                    disabled={loading}
                     className="h-4 w-4 rounded border-gray-300 accent-black"
                   />
 
@@ -383,20 +535,30 @@ export default function Login() {
 
               </div>
 
-              {/* Login */}
+              {/* Login Button */}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="group flex w-full items-center justify-center rounded-2xl bg-[#09090b] py-4 text-sm font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-violet-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                className="group flex w-full items-center justify-center rounded-2xl bg-[#09090b] py-4 text-sm font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-violet-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                {loading ? "Logging in..." : "Login"}
 
-                {!loading && (
-                  <span className="ml-2 transition group-hover:translate-x-1">
-                    →
-                  </span>
+                {loading ? (
+                  <>
+                    <span className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    Login
+
+                    <span className="ml-2 transition group-hover:translate-x-1">
+                      →
+                    </span>
+                  </>
                 )}
+
               </button>
 
             </form>
@@ -439,9 +601,11 @@ export default function Login() {
             </p>
 
           </div>
+
         </div>
 
       </div>
+
     </main>
   );
 }

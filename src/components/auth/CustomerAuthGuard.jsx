@@ -3,19 +3,23 @@ import { Navigate, useLocation } from "react-router-dom";
 export default function CustomerAuthGuard({ children }) {
   const location = useLocation();
 
-  const customer = localStorage.getItem("prapt_customer");
+  const accessToken =
+    localStorage.getItem("prapt_access_token") ||
+    sessionStorage.getItem("prapt_access_token");
 
-  // Login/Register pages ko allow karo
-  if (
-    location.pathname === "/login" ||
-    location.pathname === "/register"
-  ) {
-    return children;
-  }
+  const customer =
+    localStorage.getItem("prapt_customer") ||
+    sessionStorage.getItem("prapt_customer");
 
-  // Customer login nahi hai
-  if (!customer) {
-    return <Navigate to="/login" replace />;
+  // Login nahi hai
+  if (!accessToken || !customer) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location.pathname }}
+      />
+    );
   }
 
   return children;
