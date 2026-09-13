@@ -1,164 +1,139 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import type { FormEvent, ChangeEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+type LoginResponse = {
+  success?: boolean;
+  message?: string;
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+  profile?: {
+    id: string;
+    full_name: string;
+    email: string;
+    role: string;
+  };
+  session?: {
+    access_token?: string;
+    refresh_token?: string;
+  };
+};
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const [popup, setPopup] = useState({
-    show: false,
-    type: "",
-    message: "",
-  });
-
-  // =========================================================
-  // INPUT CHANGE
-  // =========================================================
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    setErrorMessage("");
   };
 
-  // =========================================================
-  // POPUP
-  // =========================================================
-
-  const showPopup = (type, message) => {
-    setPopup({
-      show: true,
-      type,
-      message,
-    });
-
-    setTimeout(() => {
-      setPopup({
-        show: false,
-        type: "",
-        message: "",
-      });
-    }, 3500);
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    setErrorMessage("");
   };
 
-  // =========================================================
-  // LOGIN
-  // =========================================================
+  const handleRememberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(e.target.checked);
+  };
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!formData.email.trim()) {
-      showPopup("error", "Please enter your email address.");
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    if (!email.trim()) {
+      setErrorMessage("Please enter your email address.");
       return;
     }
 
-    if (!formData.password) {
-      showPopup("error", "Please enter your password.");
+    if (!password) {
+      setErrorMessage("Please enter your password.");
       return;
     }
-
-    setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email.trim(),
-            password: formData.password,
-          }),
-        }
-      );
+      setLoading(true);
 
-      const data = await response.json();
+      const API_URL =
+        import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(
-          data.message || "Invalid email or password."
-        );
+        throw new Error(data.message || "Login failed.");
       }
 
-      // =====================================================
-      // SAVE LOGIN DATA
-      // =====================================================
-
+      // Store login information
       if (data.session?.access_token) {
-        localStorage.setItem(
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        storage.setItem(
           "prapt_access_token",
           data.session.access_token
         );
-      }
 
-      if (data.session?.refresh_token) {
-        localStorage.setItem(
-          "prapt_refresh_token",
-          data.session.refresh_token
-        );
+        if (data.session.refresh_token) {
+          storage.setItem(
+            "prapt_refresh_token",
+            data.session.refresh_token
+          );
+        }
       }
 
       if (data.user) {
-        localStorage.setItem(
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        storage.setItem(
           "prapt_user",
           JSON.stringify(data.user)
         );
       }
 
       if (data.profile) {
-        localStorage.setItem(
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        storage.setItem(
           "prapt_profile",
           JSON.stringify(data.profile)
         );
       }
 
-      // Customer role
-      localStorage.setItem("prapt_role", "customer");
+      setSuccessMessage("Login successful!");
 
-      // Remember me
-      const rememberMe = document.getElementById("remember");
-
-      if (rememberMe?.checked) {
-        localStorage.setItem("prapt_remember", "true");
-      } else {
-        localStorage.removeItem("prapt_remember");
-      }
-
-      // =====================================================
-      // SUCCESS POPUP
-      // =====================================================
-
-      showPopup(
-        "success",
-        "Login successful! Welcome to PRAPT."
-      );
-
-      // Small delay so user can see animation
       setTimeout(() => {
         navigate("/");
-      }, 1000);
-    } catch (error) {
-      console.error("Login error:", error);
-
-      showPopup(
-        "error",
-        error.message || "Something went wrong. Please try again."
-      );
+      }, 700);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -166,76 +141,6 @@ export default function Login() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f8]">
-
-      {/* =====================================================
-          ANIMATED POPUP
-      ===================================================== */}
-
-      {popup.show && (
-        <div
-          className="fixed right-5 top-5 z-[9999] w-[calc(100%-40px)] max-w-sm animate-[slideIn_.4s_ease-out]"
-        >
-          <div
-            className={`overflow-hidden rounded-2xl border bg-white shadow-2xl ${
-              popup.type === "success"
-                ? "border-emerald-200"
-                : "border-red-200"
-            }`}
-          >
-            <div className="flex items-start gap-4 p-4">
-
-              {/* Icon */}
-              <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-bold ${
-                  popup.type === "success"
-                    ? "bg-emerald-100 text-emerald-600"
-                    : "bg-red-100 text-red-600"
-                }`}
-              >
-                {popup.type === "success" ? "✓" : "!"}
-              </div>
-
-              {/* Message */}
-              <div className="flex-1">
-                <p className="text-sm font-black text-gray-900">
-                  {popup.type === "success"
-                    ? "Success"
-                    : "Login failed"}
-                </p>
-
-                <p className="mt-1 text-xs leading-5 text-gray-500">
-                  {popup.message}
-                </p>
-              </div>
-
-              {/* Close */}
-              <button
-                type="button"
-                onClick={() =>
-                  setPopup({
-                    show: false,
-                    type: "",
-                    message: "",
-                  })
-                }
-                className="text-gray-400 transition hover:text-black"
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Progress */}
-            <div
-              className={`h-1 ${
-                popup.type === "success"
-                  ? "bg-emerald-500"
-                  : "bg-red-500"
-              }`}
-            />
-          </div>
-        </div>
-      )}
-
       <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* =====================================================
@@ -244,17 +149,14 @@ export default function Login() {
 
         <div className="relative hidden overflow-hidden bg-[#09090b] lg:flex">
 
-          {/* Glow */}
           <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
 
           <div className="absolute -bottom-40 -left-20 h-[400px] w-[400px] rounded-full bg-blue-500/10 blur-[100px]" />
 
-          {/* Grid */}
           <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
 
           <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
 
-            {/* Logo */}
             <Link
               to="/"
               className="text-2xl font-black tracking-tight text-white"
@@ -262,10 +164,9 @@ export default function Login() {
               PRAPT<span className="text-violet-500">.</span>
             </Link>
 
-            {/* Center */}
             <div className="max-w-lg">
 
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl">
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl text-black">
                 ✦
               </div>
 
@@ -282,7 +183,6 @@ export default function Login() {
                 unforgettable experiences around you.
               </p>
 
-              {/* Stats */}
               <div className="mt-9 flex gap-8">
 
                 <div>
@@ -315,7 +215,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Bottom */}
             <p className="text-xs text-gray-600">
               Discover. Book. Experience.
             </p>
@@ -331,7 +230,8 @@ export default function Login() {
 
           <div className="w-full max-w-md">
 
-            {/* Mobile Logo */}
+            {/* Mobile logo */}
+
             <div className="mb-10 text-center lg:hidden">
               <Link
                 to="/"
@@ -342,8 +242,8 @@ export default function Login() {
             </div>
 
             {/* Heading */}
-            <div>
 
+            <div>
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-600">
                 Welcome back
               </p>
@@ -355,21 +255,32 @@ export default function Login() {
               <p className="mt-3 text-sm leading-6 text-gray-500">
                 Continue discovering and booking amazing events.
               </p>
-
             </div>
 
-            {/* =================================================
-                FORM
-            ================================================= */}
+            {/* Messages */}
+
+            {errorMessage && (
+              <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                {errorMessage}
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-600">
+                {successMessage}
+              </div>
+            )}
+
+            {/* Form */}
 
             <form
-              onSubmit={handleLogin}
+              onSubmit={handleSubmit}
               className="mt-9 space-y-5"
             >
 
               {/* Email */}
-              <div>
 
+              <div>
                 <label
                   htmlFor="email"
                   className="mb-2 block text-sm font-bold text-gray-800"
@@ -377,7 +288,7 @@ export default function Login() {
                   Email address
                 </label>
 
-                <div className="group relative">
+                <div className="relative">
 
                   <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                     @
@@ -387,8 +298,8 @@ export default function Login() {
                     id="email"
                     name="email"
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={handleEmailChange}
                     placeholder="you@example.com"
                     autoComplete="email"
                     className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-4 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
@@ -398,6 +309,7 @@ export default function Login() {
               </div>
 
               {/* Password */}
+
               <div>
 
                 <div className="mb-2 flex items-center justify-between">
@@ -411,12 +323,6 @@ export default function Login() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      showPopup(
-                        "error",
-                        "Forgot password will be connected next."
-                      )
-                    }
                     className="text-xs font-semibold text-gray-500 transition hover:text-black"
                   >
                     Forgot password?
@@ -433,13 +339,9 @@ export default function Login() {
                   <input
                     id="password"
                     name="password"
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
-                    value={formData.password}
-                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={handlePasswordChange}
                     placeholder="Enter your password"
                     autoComplete="current-password"
                     className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-16 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
@@ -448,7 +350,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() =>
-                      setShowPassword(!showPassword)
+                      setShowPassword((previous) => !previous)
                     }
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 transition hover:text-black"
                   >
@@ -459,13 +361,15 @@ export default function Login() {
               </div>
 
               {/* Remember */}
+
               <div className="flex items-center justify-between">
 
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
 
                   <input
-                    id="remember"
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={handleRememberChange}
                     className="h-4 w-4 rounded border-gray-300 accent-black"
                   />
 
@@ -479,32 +383,26 @@ export default function Login() {
 
               </div>
 
-              {/* Login Button */}
+              {/* Login */}
+
               <button
                 type="submit"
                 disabled={loading}
                 className="group flex w-full items-center justify-center rounded-2xl bg-[#09090b] py-4 text-sm font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-violet-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
               >
+                {loading ? "Logging in..." : "Login"}
 
-                {loading ? (
-                  <>
-                    <span className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Logging in...
-                  </>
-                ) : (
-                  <>
-                    Login
-                    <span className="ml-2 transition group-hover:translate-x-1">
-                      →
-                    </span>
-                  </>
+                {!loading && (
+                  <span className="ml-2 transition group-hover:translate-x-1">
+                    →
+                  </span>
                 )}
-
               </button>
 
             </form>
 
             {/* Divider */}
+
             <div className="my-7 flex items-center gap-4">
 
               <div className="h-px flex-1 bg-gray-200" />
@@ -518,6 +416,7 @@ export default function Login() {
             </div>
 
             {/* Register */}
+
             <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center">
 
               <p className="text-sm text-gray-500">
@@ -534,22 +433,15 @@ export default function Login() {
             </div>
 
             {/* Footer */}
+
             <p className="mt-8 text-center text-xs text-gray-400">
-              By continuing, you agree to PRAPT's Terms &
-              Privacy Policy.
+              By continuing, you agree to PRAPT's Terms & Privacy Policy.
             </p>
 
           </div>
         </div>
 
       </div>
-
-      {/* =====================================================
-          POPUP ANIMATION
-      ===================================================== */}
-
-     
-
     </main>
   );
 }
