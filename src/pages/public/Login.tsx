@@ -1,49 +1,104 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const [popup, setPopup] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
+
+  // =========================================================
+  // INPUT CHANGE
+  // =========================================================
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // =========================================================
+  // POPUP
+  // =========================================================
+
+  const showPopup = (type, message) => {
+    setPopup({
+      show: true,
+      type,
+      message,
+    });
+
+    setTimeout(() => {
+      setPopup({
+        show: false,
+        type: "",
+        message: "",
+      });
+    }, 3500);
+  };
+
+  // =========================================================
+  // LOGIN
+  // =========================================================
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    setError("");
-    setSuccess("");
-
-    if (!email || !password) {
-      setError("Please enter your email and password.");
+    // Basic validation
+    if (!formData.email.trim()) {
+      showPopup("error", "Please enter your email address.");
       return;
     }
 
-    try {
-      setLoading(true);
+    if (!formData.password) {
+      showPopup("error", "Please enter your password.");
+      return;
+    }
 
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email.trim(),
+            password: formData.password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || "Invalid email or password");
+        throw new Error(
+          data.message || "Invalid email or password."
+        );
       }
 
-      // Save login session
+      // =====================================================
+      // SAVE LOGIN DATA
+      // =====================================================
+
       if (data.session?.access_token) {
         localStorage.setItem(
           "prapt_access_token",
@@ -72,18 +127,37 @@ export default function Login() {
         );
       }
 
-      // Success popup
-      setSuccess("Welcome back! Redirecting...");
+      // Customer role
+      localStorage.setItem("prapt_role", "customer");
 
-      // Redirect after popup
+      // Remember me
+      const rememberMe = document.getElementById("remember");
+
+      if (rememberMe?.checked) {
+        localStorage.setItem("prapt_remember", "true");
+      } else {
+        localStorage.removeItem("prapt_remember");
+      }
+
+      // =====================================================
+      // SUCCESS POPUP
+      // =====================================================
+
+      showPopup(
+        "success",
+        "Login successful! Welcome to PRAPT."
+      );
+
+      // Small delay so user can see animation
       setTimeout(() => {
         navigate("/");
-      }, 1500);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again."
+      }, 1000);
+    } catch (error) {
+      console.error("Login error:", error);
+
+      showPopup(
+        "error",
+        error.message || "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -97,40 +171,67 @@ export default function Login() {
           ANIMATED POPUP
       ===================================================== */}
 
-      {(success || error) && (
-        <div className="fixed right-5 top-5 z-[9999] animate-[loginToast_.4s_ease-out]">
+      {popup.show && (
+        <div
+          className="fixed right-5 top-5 z-[9999] w-[calc(100%-40px)] max-w-sm animate-[slideIn_.4s_ease-out]"
+        >
           <div
-            className={`flex min-w-[320px] items-center gap-4 rounded-2xl border bg-white px-5 py-4 shadow-2xl ${
-              success
-                ? "border-green-200"
+            className={`overflow-hidden rounded-2xl border bg-white shadow-2xl ${
+              popup.type === "success"
+                ? "border-emerald-200"
                 : "border-red-200"
             }`}
           >
+            <div className="flex items-start gap-4 p-4">
 
-            {/* Icon */}
+              {/* Icon */}
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-bold ${
+                  popup.type === "success"
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-red-100 text-red-600"
+                }`}
+              >
+                {popup.type === "success" ? "✓" : "!"}
+              </div>
+
+              {/* Message */}
+              <div className="flex-1">
+                <p className="text-sm font-black text-gray-900">
+                  {popup.type === "success"
+                    ? "Success"
+                    : "Login failed"}
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-gray-500">
+                  {popup.message}
+                </p>
+              </div>
+
+              {/* Close */}
+              <button
+                type="button"
+                onClick={() =>
+                  setPopup({
+                    show: false,
+                    type: "",
+                    message: "",
+                  })
+                }
+                className="text-gray-400 transition hover:text-black"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Progress */}
             <div
-              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl font-black ${
-                success
-                  ? "bg-green-100 text-green-600"
-                  : "bg-red-100 text-red-600"
+              className={`h-1 ${
+                popup.type === "success"
+                  ? "bg-emerald-500"
+                  : "bg-red-500"
               }`}
-            >
-              {success ? "✓" : "!"}
-            </div>
-
-            {/* Text */}
-            <div className="min-w-0">
-              <p className="text-sm font-black text-gray-900">
-                {success ? "Login Successful" : "Login Failed"}
-              </p>
-
-              <p className="mt-1 text-xs leading-5 text-gray-500">
-                {success
-                  ? success
-                  : error}
-              </p>
-            </div>
-
+            />
           </div>
         </div>
       )}
@@ -143,10 +244,12 @@ export default function Login() {
 
         <div className="relative hidden overflow-hidden bg-[#09090b] lg:flex">
 
+          {/* Glow */}
           <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
 
           <div className="absolute -bottom-40 -left-20 h-[400px] w-[400px] rounded-full bg-blue-500/10 blur-[100px]" />
 
+          {/* Grid */}
           <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:60px_60px]" />
 
           <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
@@ -179,6 +282,7 @@ export default function Login() {
                 unforgettable experiences around you.
               </p>
 
+              {/* Stats */}
               <div className="mt-9 flex gap-8">
 
                 <div>
@@ -209,9 +313,9 @@ export default function Login() {
                 </div>
 
               </div>
-
             </div>
 
+            {/* Bottom */}
             <p className="text-xs text-gray-600">
               Discover. Book. Experience.
             </p>
@@ -229,14 +333,12 @@ export default function Login() {
 
             {/* Mobile Logo */}
             <div className="mb-10 text-center lg:hidden">
-
               <Link
                 to="/"
                 className="text-3xl font-black tracking-tight"
               >
                 PRAPT<span className="text-violet-600">.</span>
               </Link>
-
             </div>
 
             {/* Heading */}
@@ -283,17 +385,16 @@ export default function Login() {
 
                   <input
                     id="email"
+                    name="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="you@example.com"
-                    disabled={loading}
                     autoComplete="email"
-                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-4 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100 disabled:cursor-not-allowed disabled:bg-gray-100"
+                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-4 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
                   />
 
                 </div>
-
               </div>
 
               {/* Password */}
@@ -310,6 +411,12 @@ export default function Login() {
 
                   <button
                     type="button"
+                    onClick={() =>
+                      showPopup(
+                        "error",
+                        "Forgot password will be connected next."
+                      )
+                    }
                     className="text-xs font-semibold text-gray-500 transition hover:text-black"
                   >
                     Forgot password?
@@ -325,26 +432,30 @@ export default function Login() {
 
                   <input
                     id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    name="password"
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    value={formData.password}
+                    onChange={handleChange}
                     placeholder="Enter your password"
-                    disabled={loading}
                     autoComplete="current-password"
-                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-12 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100 disabled:cursor-not-allowed disabled:bg-gray-100"
+                    className="w-full rounded-2xl border border-gray-200 bg-white py-3.5 pl-11 pr-16 text-sm outline-none transition duration-200 placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-gray-100"
                   />
 
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={loading}
+                    onClick={() =>
+                      setShowPassword(!showPassword)
+                    }
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 transition hover:text-black"
                   >
                     {showPassword ? "Hide" : "Show"}
                   </button>
 
                 </div>
-
               </div>
 
               {/* Remember */}
@@ -353,6 +464,7 @@ export default function Login() {
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
 
                   <input
+                    id="remember"
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-300 accent-black"
                   />
@@ -367,16 +479,16 @@ export default function Login() {
 
               </div>
 
-              {/* Login */}
+              {/* Login Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="group flex w-full items-center justify-center rounded-2xl bg-[#09090b] py-4 text-sm font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-violet-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70"
+                className="group flex w-full items-center justify-center rounded-2xl bg-[#09090b] py-4 text-sm font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-violet-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
               >
 
                 {loading ? (
                   <>
-                    <span className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <span className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                     Logging in...
                   </>
                 ) : (
@@ -423,14 +535,20 @@ export default function Login() {
 
             {/* Footer */}
             <p className="mt-8 text-center text-xs text-gray-400">
-              By continuing, you agree to PRAPT's Terms & Privacy Policy.
+              By continuing, you agree to PRAPT's Terms &
+              Privacy Policy.
             </p>
 
           </div>
-
         </div>
 
       </div>
+
+      {/* =====================================================
+          POPUP ANIMATION
+      ===================================================== */}
+
+     
 
     </main>
   );

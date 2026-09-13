@@ -37,7 +37,7 @@ import Tickets from "./pages/admin/Tickets";
 import Payments from "./pages/admin/Payments";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminSettings from "./pages/admin/Settings";
-
+import CustomerAuthGuard from "./components/auth/CustomerAuthGuard";
 
 function App() {
   return (
@@ -211,6 +211,63 @@ function App() {
           />
 
         </Route>
+        <Route
+  path="/"
+  element={
+    <CustomerAuthGuard>
+      <Home />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route
+  path="/events"
+  element={
+    <CustomerAuthGuard>
+      <Events />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route
+  path="/events/:id"
+  element={
+    <CustomerAuthGuard>
+      <EventDetails />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route
+  path="/checkout/:id"
+  element={
+    <CustomerAuthGuard>
+      <Checkout />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route
+  path="/payment-success"
+  element={
+    <CustomerAuthGuard>
+      <PaymentSuccess />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route
+  path="/tickets"
+  element={
+    <CustomerAuthGuard>
+      <MyTickets />
+    </CustomerAuthGuard>
+  }
+/>
+
+<Route path="/login" element={<Login />} />
+
+<Route path="/register" element={<Register />} />
 
       </Routes>
     </BrowserRouter>
