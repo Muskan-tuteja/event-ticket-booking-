@@ -40,16 +40,17 @@ import AdminSettings from "./pages/admin/Settings";
 
 // ================= AUTH =================
 import CustomerAuthGuard from "./components/auth/CustomerAuthGuard";
-
+import RoleSelectionPopup from "./components/RoleSelectionPopup";
 function App() {
   return (
     <BrowserRouter>
+
+      {/* Popup MUST be outside Routes */}
+      <RoleSelectionPopup />
+
       <Routes>
 
-        {/* =====================================================
-            CUSTOMER AUTHENTICATION
-        ===================================================== */}
-
+        {/* CUSTOMER AUTHENTICATION */}
         <Route
           path="/login"
           element={<Login />}
@@ -60,19 +61,10 @@ function App() {
           element={<Register />}
         />
 
-
-        {/* =====================================================
-            CUSTOMER / PUBLIC WEBSITE
-            LOGIN REQUIRED
-        ===================================================== */}
-
+        {/* CUSTOMER / PUBLIC WEBSITE */}
         <Route
           path="/"
-          element={
-            <CustomerAuthGuard>
-              <Home />
-            </CustomerAuthGuard>
-          }
+          element={<Home />}
         />
 
         <Route
@@ -120,12 +112,7 @@ function App() {
           }
         />
 
-
-        {/* =====================================================
-            ORGANIZER
-            SEPARATE AUTHENTICATION
-        ===================================================== */}
-
+        {/* ORGANIZER */}
         <Route
           path="/organizer"
           element={<OrganizerLogin />}
@@ -181,36 +168,23 @@ function App() {
           element={<Settings />}
         />
 
-
-        {/* =====================================================
-            SCANNER
-        ===================================================== */}
-
+        {/* SCANNER */}
         <Route
           path="/scanner"
           element={<Scanner />}
         />
 
-
-        {/* =====================================================
-            ADMIN LOGIN
-        ===================================================== */}
-
+        {/* ADMIN LOGIN */}
         <Route
           path="/admin/login"
           element={<AdminLogin />}
         />
 
-
-        {/* =====================================================
-            ADMIN PORTAL
-        ===================================================== */}
-
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={<AdminLayout />}
         >
-
           <Route
             index
             element={<AdminDashboard />}
@@ -255,10 +229,10 @@ function App() {
             path="settings"
             element={<AdminSettings />}
           />
-
         </Route>
 
       </Routes>
+
     </BrowserRouter>
   );
 }
