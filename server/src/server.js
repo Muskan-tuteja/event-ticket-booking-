@@ -8,20 +8,38 @@ import authRoutes from "./routes/auth.js";
 
 const app = express();
 
-
 /* =========================================================
-   MIDDLEWARE
+   CORS
 ========================================================= */
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://event-ticket-booking-rust.vercel.app",
+];
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests without origin
+      // Example: Postman / server-to-server
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(`CORS blocked for origin: ${origin}`)
+      );
+    },
     credentials: true,
   })
 );
 
 app.use(express.json());
-
 
 /* =========================================================
    ROOT
@@ -33,7 +51,6 @@ app.get("/", (req, res) => {
     message: "PRAPT Backend API is running",
   });
 });
-
 
 /* =========================================================
    HEALTH CHECK
@@ -49,17 +66,18 @@ app.get("/api/health", async (req, res) => {
     if (error) {
       return res.status(500).json({
         success: false,
-        message: "Supabase connected, but organizers table is not ready",
+        message:
+          "Supabase connected, but organizers table is not ready",
         error: error.message,
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "PRAPT API + Supabase are connected",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Supabase connection failed",
       error: error.message,
@@ -67,13 +85,11 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-
 /* =========================================================
    AUTH ROUTES
 ========================================================= */
 
 app.use("/api/auth", authRoutes);
-
 
 /* =========================================================
    SERVER
@@ -81,6 +97,6 @@ app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`PRAPT Backend running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`PRAPT Backend running on port ${PORT}`);
 });
