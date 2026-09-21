@@ -452,23 +452,18 @@ export default function Login() {
 
               <div>
 
-                <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
+  <label className="text-sm font-semibold text-gray-900">
+    Password
+  </label>
 
-                  <label
-                    htmlFor="password"
-                    className="text-sm font-bold text-gray-800"
-                  >
-                    Password
-                  </label>
-
-                  <button
-                    type="button"
-                    className="text-xs font-semibold text-gray-500 transition hover:text-black"
-                  >
-                    Forgot password?
-                  </button>
-
-                </div>
+  <Link
+    to="/forgot-password?role=customer"
+    className="text-sm font-semibold text-black hover:text-purple-600 transition-colors cursor-pointer"
+  >
+    Forgot password?
+  </Link>
+</div>
 
                 <div className="relative">
 
