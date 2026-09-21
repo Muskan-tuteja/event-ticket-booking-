@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-});
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  }
+);
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -35,61 +36,67 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    const prepareResetSession = async () => {
+    let mounted = true;
+
+    const checkRecoverySession = async () => {
       try {
         setError("");
 
-        // First check if Supabase already created a recovery session
+        // Supabase automatically processes the recovery token
+        // from the URL because detectSessionInUrl is enabled.
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+        if (!mounted) return;
 
         if (session) {
           setCheckingSession(false);
           return;
         }
 
-        // Fallback: manually read tokens from URL hash
-        const hash = window.location.hash.substring(1);
-
-        if (hash) {
-          const hashParams = new URLSearchParams(hash);
-
-          const accessToken = hashParams.get("access_token");
-          const refreshToken = hashParams.get("refresh_token");
-
-          if (accessToken && refreshToken) {
-            const { error: sessionError } =
-              await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken,
-              });
-
-            if (sessionError) {
-              throw sessionError;
-            }
-
-            setCheckingSession(false);
-            return;
-          }
-        }
-
         setError(
           "This password reset link is invalid or has expired. Please request a new link."
         );
       } catch (err) {
-        console.error("Reset session error:", err);
+        console.error("Recovery session error:", err);
 
-        setError(
-          err?.message ||
-            "Unable to verify the reset link. Please request a new link."
-        );
+        if (mounted) {
+          setError(
+            err?.message ||
+              "Unable to verify the reset link. Please request a new link."
+          );
+        }
       } finally {
-        setCheckingSession(false);
+        if (mounted) {
+          setCheckingSession(false);
+        }
       }
     };
 
-    prepareResetSession();
+    // Listen for Supabase recovery event
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
+
+      if (event === "PASSWORD_RECOVERY" && session) {
+        setError("");
+        setCheckingSession(false);
+      }
+    });
+
+    checkRecoverySession();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -118,7 +125,12 @@ export default function ResetPassword() {
 
       const {
         data: { session },
+        error: sessionError,
       } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        throw sessionError;
+      }
 
       if (!session) {
         setError(
@@ -129,7 +141,7 @@ export default function ResetPassword() {
 
       const { error: updateError } =
         await supabase.auth.updateUser({
-          password,
+          password: password,
         });
 
       if (updateError) {
@@ -140,10 +152,9 @@ export default function ResetPassword() {
         "Password updated successfully! Redirecting to login..."
       );
 
-      // Clear reset session
+      // Sign out the temporary recovery session
       await supabase.auth.signOut();
 
-      // Redirect after short delay
       setTimeout(() => {
         if (role === "organizer") {
           navigate("/organizer/login");
@@ -185,7 +196,6 @@ export default function ResetPassword() {
     <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
 
-        {/* Logo / Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white text-black text-2xl font-black mb-5 shadow-xl">
             P
@@ -200,7 +210,6 @@ export default function ResetPassword() {
           </p>
         </div>
 
-        {/* Card */}
         <div className="bg-white/[0.06] border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
 
           {error && (
@@ -218,7 +227,6 @@ export default function ResetPassword() {
           {!success && (
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* New Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
                   New Password
@@ -234,13 +242,13 @@ export default function ResetPassword() {
                     placeholder="Enter new password"
                     autoComplete="new-password"
                     disabled={loading}
-                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3.5 pr-12 text-white placeholder-gray-500 outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3.5 pr-16 text-white placeholder-gray-500 outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
                   />
 
                   <button
                     type="button"
                     onClick={() =>
-                      setShowPassword(!showPassword)
+                      setShowPassword((prev) => !prev)
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                   >
@@ -249,7 +257,6 @@ export default function ResetPassword() {
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
                   Confirm Password
@@ -269,15 +276,13 @@ export default function ResetPassword() {
                     placeholder="Confirm new password"
                     autoComplete="new-password"
                     disabled={loading}
-                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3.5 pr-12 text-white placeholder-gray-500 outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3.5 pr-16 text-white placeholder-gray-500 outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/10 disabled:opacity-50"
                   />
 
                   <button
                     type="button"
                     onClick={() =>
-                      setShowConfirmPassword(
-                        !showConfirmPassword
-                      )
+                      setShowConfirmPassword((prev) => !prev)
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                   >
@@ -288,12 +293,10 @@ export default function ResetPassword() {
                 </div>
               </div>
 
-              {/* Password requirement */}
               <p className="text-xs text-gray-500">
                 Password must contain at least 6 characters.
               </p>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -306,7 +309,6 @@ export default function ResetPassword() {
             </form>
           )}
 
-          {/* Back to login */}
           {!success && (
             <button
               type="button"
