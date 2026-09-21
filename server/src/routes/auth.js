@@ -522,9 +522,9 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-    /* =====================================================
+       /* =========================================================
        LOGIN SUCCESS
-    ===================================================== */
+       ========================================================= */
 
     return res.json({
       success: true,
@@ -549,5 +549,145 @@ router.post("/forgot-password", async (req, res) => {
     });
   }
 });
+
+
+/* =========================================================
+   FORGOT PASSWORD
+   role = customer / organizer
+   ========================================================= */
+
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email, role } = req.body;
+
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
+
+    if (!email || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and role are required",
+      });
+    }
+
+    /* =====================================================
+       ROLE VALIDATION
+       ===================================================== */
+
+    if (!["customer", "organizer"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    /* =====================================================
+       NORMALIZE EMAIL
+       ===================================================== */
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    /* =====================================================
+       CHECK USER PROFILE + ROLE
+       ===================================================== */
+
+    const {
+      data: profile,
+      error: profileError,
+    } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, role")
+      .eq("email", cleanEmail)
+      .eq("role", role)
+      .maybeSingle();
+
+    /* =====================================================
+       PROFILE CHECK ERROR
+       ===================================================== */
+
+    if (profileError) {
+      console.error(
+        "FORGOT PASSWORD PROFILE ERROR:",
+        profileError
+      );
+
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
+
+    /* =====================================================
+       USER NOT FOUND
+       ===================================================== */
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message:
+          role === "organizer"
+            ? "This email is not registered as an organizer."
+            : "This email is not registered as a customer.",
+      });
+    }
+
+    /* =====================================================
+       SEND SUPABASE PASSWORD RESET EMAIL
+       ===================================================== */
+
+    const { error } =
+      await supabaseAuth.auth.resetPasswordForEmail(
+        cleanEmail,
+        {
+          redirectTo:
+            `${process.env.FRONTEND_URL}/reset-password?role=${role}`,
+        }
+      );
+
+    /* =====================================================
+       PASSWORD RESET ERROR
+       ===================================================== */
+
+    if (error) {
+      console.error(
+        "PASSWORD RESET ERROR:",
+        error
+      );
+
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    /* =====================================================
+       SUCCESS
+       ===================================================== */
+
+    return res.json({
+      success: true,
+      message:
+        "Password reset link has been sent to your email.",
+    });
+
+  } catch (error) {
+    console.error(
+      "FORGOT PASSWORD ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to send password reset email",
+    });
+  }
+});
+
+
+/* =========================================================
+   EXPORT ROUTER
+   ========================================================= */
 
 export default router;
