@@ -42,6 +42,7 @@ import AdminSettings from "./pages/admin/Settings";
 import CustomerAuthGuard from "./components/auth/CustomerAuthGuard";
 import RoleSelectionPopup from "./components/RoleSelectionPopup";
 import ForgotPassword from "./pages/public/ForgotPassword";
+import ResetPassword from "./pages/public/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -234,6 +235,10 @@ function App() {
         <Route
   path="/forgot-password"
   element={<ForgotPassword />}
+/>
+<Route
+  path="/reset-password"
+  element={<ResetPassword />}
 />
 
       </Routes>
